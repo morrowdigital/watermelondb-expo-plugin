@@ -1,7 +1,8 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": "expo-module-scripts/tsconfig.plugin",
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "strict": true
-  }
+    "outDir": "build",
+    "rootDir": "src"
+  },
+  "include": ["./src"]
 }

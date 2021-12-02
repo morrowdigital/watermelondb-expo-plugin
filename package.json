@@ -1,34 +1,34 @@
 {
-  "scripts": {
-    "start": "expo start --dev-client",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
-  },
+  "name": "watermelondb-expo-plugin",
+  "version": "1.0.0-beta",
+  "main": "build/withWatermelon.js",
+  "types": "build/withWatermelon.d.ts",
+  "license": "MIT",
+  "git": "https://github.com/morrowdigital/watermelondb-expo-plugin.git",
+  "homepage": "https://github.com/morrowdigital/watermelondb-expo-plugin#readme",
+  "bugs": "https://github.com/morrowdigital/watermelondb-expo-plugin/issues",
+  "keywords": [
+    "watermelondb",
+    "expo-plugin",
+    "expo"
+  ],
   "dependencies": {
-    "@nozbe/watermelondb": "^0.24.0",
-    "expo": "~43.0.2",
-    "expo-status-bar": "~1.1.0",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "react-native": "0.64.3",
-    "react-native-web": "0.17.1",
-    "resolve-from": "^5.0.0",
-    "expo-splash-screen": "~0.13.5",
-    "expo-updates": "~0.10.13",
-    "react-native-gesture-handler": "~1.10.2",
-    "react-native-reanimated": "~2.2.0",
-    "react-native-safe-area-context": "3.3.2",
-    "react-native-screens": "~3.8.0"
+    "@expo/config-plugins": "^4.0.10"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@types/react": "~17.0.21",
-    "@types/react-native": "~0.64.12",
-    "typescript": "~4.3.5"
+    "expo-module-scripts": "^2.0.0"
   },
-  "private": true,
-  "name": "wmlDB",
-  "version": "1.0.0"
+  "files": [
+    "build",
+    "app.plugin.js"
+  ],
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "lint": "expo-module lint",
+    "test": "expo-module test",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "expo-module": "expo-module"
+  }
 }
