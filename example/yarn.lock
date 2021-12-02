@@ -1067,7 +1067,7 @@
     xcode "^3.0.1"
     xml2js "^0.4.23"
 
-"@expo/config-plugins@4.0.10", "@expo/config-plugins@^4.0.2":
+"@expo/config-plugins@4.0.10", "@expo/config-plugins@^4.0.10", "@expo/config-plugins@^4.0.2":
   version "4.0.10"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.10.tgz#6ed83012afea211442b02994fbc3ecffa95b4138"
   integrity sha512-wdSgwWgonjnZBqkxH1TiFlPsY9nhJ6jSMiSKlUh2N8avgLeot2CzT8kTtJa3jB+3/sHiFZE6/VbD7USAIkmIIA==
@@ -1273,6 +1273,13 @@
     "@types/node" "*"
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
+
+"@morrowdigital/watermelondb-expo-plugin@^1.0.0-beta":
+  version "1.0.0-beta"
+  resolved "https://registry.yarnpkg.com/@morrowdigital/watermelondb-expo-plugin/-/watermelondb-expo-plugin-1.0.0-beta.tgz#7049f110f85d6e5688e2632a4290080c076490b1"
+  integrity sha512-LdsqOjsxGIvYxyWlf2k+coKX19klCWrQiRpnvi1e3zZ3V/nEkqiofHcJ+JkFPP3OSPeiviZenf8nE0EqvvUs6Q==
+  dependencies:
+    "@expo/config-plugins" "^4.0.10"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
