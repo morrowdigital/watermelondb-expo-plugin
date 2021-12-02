@@ -1,29 +1,22 @@
-# watermelon-db-plugin
+# watermelon-db-plugin 🍉
+Config plugin to auto configure `@nozbe/watermelondb`
 
-Put a description of your Unimodule here
+## Install
 
-# API documentation
-
-- [Documentation for the master branch](https://github.com/expo/expo/blob/master/docs/pages/versions/unversioned/sdk/watermelon-db-plugin.md)
-- [Documentation for the latest stable release](https://docs.expo.io/versions/latest/sdk/watermelon-db-plugin/)
-
-# Installation in managed Expo projects
-
-For managed [managed](https://docs.expo.io/versions/latest/introduction/managed-vs-bare/) Expo projects, please follow the installation instructions in the [API documentation for the latest stable release](#api-documentation). If you follow the link and there is no documentation available then this library is not yet usable within managed projects &mdash; it is likely to be included in an upcoming Expo SDK release.
-
-# Installation in bare React Native projects
-
-For bare React Native projects, you must ensure that you have [installed and configured the `react-native-unimodules` package](https://github.com/expo/expo/tree/master/packages/react-native-unimodules) before continuing.
-
-### Add the package to your npm dependencies
+> Tested against Expo SDK 43
 
 ```
-npm install watermelon-db-plugin
+yarn add watermelondb-expo-plugin
 ```
 
+After installing this npm package, add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`plugins`](https://docs.expo.io/versions/latest/config/app/#plugins) array of your `app.json` or `app.config.js`. Then rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
+## Example
 
+In your app.json `plugins` array:
 
-# Contributing
-
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
+```json
+{
+  "plugins": ["watermelondb-expo-plugin"]
+}
+```
