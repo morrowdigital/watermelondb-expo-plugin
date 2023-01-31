@@ -1,2 +1,2 @@
-declare const _default: (config: any) => any;
+declare const _default: (config: any, options: any) => any;
 export default _default;
