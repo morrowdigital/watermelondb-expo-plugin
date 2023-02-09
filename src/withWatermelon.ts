@@ -15,36 +15,6 @@ const fs = filesys.promises;
 /**
  * Platform: Android
  *  */
-function setAppBuildGradle(config: ExportedConfigWithProps) {
-  return withAppBuildGradle(config, (config) => {
-    config.modResults.contents = replace(
-      config.modResults.contents,
-      // @ts-ignore
-      /dependencies\s{/,
-      `dependencies {
-\timplementation project(':watermelondb')`
-    );
-
-    return config;
-  });
-}
-
-function setAppSettingBuildGradle(config: ExportedConfigWithProps) {
-  return withSettingsGradle(config, (config) => {
-    config.modResults.contents = config.modResults.contents.replace(
-      `include ':app'`,
-      `
-include ':watermelondb'
-project(':watermelondb').projectDir =new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android')
-            
-include ':app'
-            `
-    );
-
-    return config;
-  });
-}
-
 function setAndroidMainApplication(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "android",
@@ -61,12 +31,6 @@ function setAndroidMainApplication(config: ExportedConfigWithProps) {
         "import com.nozbe.watermelondb.WatermelonDBPackage;",
         "import java.util.List;",
         contents
-      );
-
-      updated = insertLinesHelper(
-        "      packages.add(new WatermelonDBPackage());",
-        "      // Packages that cannot be autolinked yet can be added manually here, for example:",
-        updated
       );
 
       await fs.writeFile(filePath, updated);
@@ -151,12 +115,12 @@ const withCocoaPods = (config: ExportedConfigWithProps) => {
 
       if (watermelonPath) {
         const patchKey = "post_install";
-       const slicedContent = contents.split(patchKey);
+        const slicedContent = contents.split(patchKey);
         slicedContent[0] += `\n
   pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
   pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n\n  `;
-        await fs.writeFile(filePath, slicedContent.join(patchKey))
+        await fs.writeFile(filePath, slicedContent.join(patchKey));
       } else {
         throw new Error("Please make sure you have watermelondb installed");
       }
@@ -213,13 +177,13 @@ function replace(contents: string, match: string, replace: string): string {
 
 // @ts-ignore
 export default (config, options) => {
-  config = setAppSettingBuildGradle(config);
-  config = setAppBuildGradle(config);
+  // config = setAppSettingBuildGradle(config);
+  // config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
   config = setAppDelegate(config);
   config = setWmelonBridgingHeader(config);
   config = withCocoaPods(config);
-  if ( options?.excludeSimulatorArchitectures ?? true ) {
+  if (options?.excludeSimulatorArchitectures ?? true) {
     config = withExcludedSimulatorArchitectures(config);
   }
   return config;
