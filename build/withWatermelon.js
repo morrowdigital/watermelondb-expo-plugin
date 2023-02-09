@@ -41,6 +41,7 @@ function setAndroidMainApplication(config) {
             const filePath = `${root}/app/src/main/java/${(_b = (_a = config === null || config === void 0 ? void 0 : config.android) === null || _a === void 0 ? void 0 : _a.package) === null || _b === void 0 ? void 0 : _b.replace(/\./g, "/")}/MainApplication.java`;
             const contents = await fs.readFile(filePath, "utf-8");
             let updated = (0, insertLinesHelper_1.insertLinesHelper)("import com.nozbe.watermelondb.WatermelonDBPackage;", "import java.util.List;", contents);
+            updated = (0, insertLinesHelper_1.insertLinesHelper)("      packages.add(new WatermelonDBPackage());", "      // Packages that cannot be autolinked yet can be added manually here, for example:", updated);
             await fs.writeFile(filePath, updated);
             return config;
         },
@@ -95,11 +96,13 @@ const withCocoaPods = (config) => {
             const contents = await fs.readFile(filePath, "utf-8");
             const watermelonPath = isWatermelonDBInstalled(config.modRequest.projectRoot);
             if (watermelonPath) {
-                await fs.writeFile(filePath, `
-pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n
-                ` + contents);
+                const patchKey = "post_install";
+                const slicedContent = contents.split(patchKey);
+                slicedContent[0] += `\n
+  pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
+  pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n\n  `;
+                await fs.writeFile(filePath, slicedContent.join(patchKey));
             }
             else {
                 throw new Error("Please make sure you have watermelondb installed");
@@ -144,13 +147,16 @@ function replace(contents, match, replace) {
     return contents.replace(match, replace);
 }
 // @ts-ignore
-exports.default = (config) => {
+exports.default = (config, options) => {
+    var _a;
     config = setAppSettingBuildGradle(config);
     config = setAppBuildGradle(config);
     config = setAndroidMainApplication(config);
     config = setAppDelegate(config);
     config = setWmelonBridgingHeader(config);
     config = withCocoaPods(config);
-    config = withExcludedSimulatorArchitectures(config);
+    if ((_a = options === null || options === void 0 ? void 0 : options.excludeSimulatorArchitectures) !== null && _a !== void 0 ? _a : true) {
+        config = withExcludedSimulatorArchitectures(config);
+    }
     return config;
 };

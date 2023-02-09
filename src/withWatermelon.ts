@@ -63,6 +63,12 @@ function setAndroidMainApplication(config: ExportedConfigWithProps) {
         contents
       );
 
+      updated = insertLinesHelper(
+        "      packages.add(new WatermelonDBPackage());",
+        "      // Packages that cannot be autolinked yet can be added manually here, for example:",
+        updated
+      );
+
       await fs.writeFile(filePath, updated);
 
       return config;
@@ -144,14 +150,13 @@ const withCocoaPods = (config: ExportedConfigWithProps) => {
       );
 
       if (watermelonPath) {
-        await fs.writeFile(
-          filePath,
-          `
-pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n
-                ` + contents
-        );
+        const patchKey = "post_install";
+       const slicedContent = contents.split(patchKey);
+        slicedContent[0] += `\n
+  pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
+  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
+  pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n\n  `;
+        await fs.writeFile(filePath, slicedContent.join(patchKey))
       } else {
         throw new Error("Please make sure you have watermelondb installed");
       }
@@ -207,13 +212,15 @@ function replace(contents: string, match: string, replace: string): string {
 }
 
 // @ts-ignore
-export default (config) => {
+export default (config, options) => {
   config = setAppSettingBuildGradle(config);
   config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
   config = setAppDelegate(config);
   config = setWmelonBridgingHeader(config);
   config = withCocoaPods(config);
-  config = withExcludedSimulatorArchitectures(config);
+  if ( options?.excludeSimulatorArchitectures ?? true ) {
+    config = withExcludedSimulatorArchitectures(config);
+  }
   return config;
 };
