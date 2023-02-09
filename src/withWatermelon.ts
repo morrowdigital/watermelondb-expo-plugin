@@ -1,8 +1,6 @@
 import {
-  withAppBuildGradle,
   withXcodeProject,
   withDangerousMod,
-  withSettingsGradle,
   ExportedConfigWithProps,
 } from "@expo/config-plugins";
 import filesys from "fs";

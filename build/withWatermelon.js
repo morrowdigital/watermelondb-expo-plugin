@@ -12,26 +12,6 @@ const fs = fs_1.default.promises;
 /**
  * Platform: Android
  *  */
-function setAppBuildGradle(config) {
-    return (0, config_plugins_1.withAppBuildGradle)(config, (config) => {
-        config.modResults.contents = replace(config.modResults.contents, 
-        // @ts-ignore
-        /dependencies\s{/, `dependencies {
-\timplementation project(':watermelondb')`);
-        return config;
-    });
-}
-function setAppSettingBuildGradle(config) {
-    return (0, config_plugins_1.withSettingsGradle)(config, (config) => {
-        config.modResults.contents = config.modResults.contents.replace(`include ':app'`, `
-include ':watermelondb'
-project(':watermelondb').projectDir =new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android')
-            
-include ':app'
-            `);
-        return config;
-    });
-}
 function setAndroidMainApplication(config) {
     return (0, config_plugins_1.withDangerousMod)(config, [
         "android",
@@ -40,11 +20,6 @@ function setAndroidMainApplication(config) {
             const filePath = `${root}/app/src/main/java/${config?.android?.package?.replace(/\./g, "/")}/MainApplication.java`;
             const contents = await fs.readFile(filePath, "utf-8");
             let updated = (0, insertLinesHelper_1.insertLinesHelper)("import com.nozbe.watermelondb.WatermelonDBPackage;", "import java.util.List;", contents);
-            // updated = insertLinesHelper(
-            //   "      packages.add(new WatermelonDBPackage());",
-            //   "      // Packages that cannot be autolinked yet can be added manually here, for example:",
-            //   updated
-            // );
             await fs.writeFile(filePath, updated);
             return config;
         },
