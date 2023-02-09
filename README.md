@@ -3,7 +3,7 @@ Config plugin to auto configure `@nozbe/watermelondb`
 
 ## Install
 
-> Tested against Expo SDK 43
+> Tested against Expo SDK 47
 
 ```
 yarn add @morrowdigital/watermelondb-expo-plugin
