@@ -10,6 +10,7 @@
     "@morrowdigital/watermelondb-expo-plugin": "^1.0.0-beta",
     "@nozbe/watermelondb": "^0.25.5",
     "expo": "~47.0.12",
+    "expo-build-properties": "~0.4.1",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
     "expo-updates": "~0.15.6",

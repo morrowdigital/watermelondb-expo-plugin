@@ -28,6 +28,16 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["../app.plugin"]
+    "plugins": [
+      "../app.plugin",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.6.10"
+          }
+        }
+      ]
+    ]
   }
 }
