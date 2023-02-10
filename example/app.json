@@ -13,9 +13,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.wmlDB.app"
@@ -31,7 +29,15 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@morrowdigital/watermelondb-expo-plugin"
+      "../app.plugin",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.6.10"
+          }
+        }
+      ]
     ]
   }
 }
