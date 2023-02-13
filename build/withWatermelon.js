@@ -32,7 +32,7 @@ function setAppDelegate(config) {
     return (0, config_plugins_1.withDangerousMod)(config, [
         "ios",
         async (config) => {
-            const filePath = path_1.default.join(config.modRequest.platformProjectRoot, config.name.replace("-", ""), "AppDelegate.h");
+            const filePath = getPlatformProjectFilePath(config, 'AppDelegate.h');
             const contents = await fs.readFile(filePath, "utf-8");
             let updated = `#import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -51,7 +51,7 @@ function setWmelonBridgingHeader(config) {
     return (0, config_plugins_1.withDangerousMod)(config, [
         "ios",
         async (config) => {
-            const filePath = path_1.default.join(config.modRequest.projectRoot + "/ios", config.name.replace("-", ""), "wmelon.swift");
+            const filePath = getPlatformProjectFilePath(config, 'wmelon.swift');
             const contents = `
 //
 //  water.swift
@@ -118,11 +118,9 @@ function isWatermelonDBInstalled(projectRoot) {
     const resolved = resolve_from_1.default.silent(projectRoot, "@nozbe/watermelondb/package.json");
     return resolved ? path_1.default.dirname(resolved) : null;
 }
-function replace(contents, match, replace) {
-    // @ts-ignore
-    if (!(match.test ? RegExp(match).test(contents) : contents.includes(match)))
-        throw new Error("Invalid text replace in config");
-    return contents.replace(match, replace);
+function getPlatformProjectFilePath(config, fileName) {
+    const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, '');
+    return path_1.default.join(config.modRequest.platformProjectRoot, projectName, fileName);
 }
 // @ts-ignore
 exports.default = (config, options) => {
