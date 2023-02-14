@@ -45,11 +45,7 @@ function setAppDelegate(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
-      const filePath = path.join(
-        config.modRequest.platformProjectRoot,
-        config.name.replace("-", ""),
-        "AppDelegate.h"
-      );
+      const filePath = getPlatformProjectFilePath(config, 'AppDelegate.h')
       const contents = await fs.readFile(filePath, "utf-8");
 
       let updated =
@@ -73,12 +69,7 @@ function setWmelonBridgingHeader(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
-      const filePath = path.join(
-        config.modRequest.projectRoot + "/ios",
-        config.name.replace("-", ""),
-        "wmelon.swift"
-      );
-
+      const filePath = getPlatformProjectFilePath(config, 'wmelon.swift')
       const contents = `
 //
 //  water.swift
@@ -165,12 +156,13 @@ function isWatermelonDBInstalled(projectRoot: string) {
   return resolved ? path.dirname(resolved) : null;
 }
 
-function replace(contents: string, match: string, replace: string): string {
-  // @ts-ignore
-  if (!(match.test ? RegExp(match).test(contents) : contents.includes(match)))
-    throw new Error("Invalid text replace in config");
-
-  return contents.replace(match, replace);
+function getPlatformProjectFilePath(config: ExportedConfigWithProps, fileName: string) {
+  const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, '')
+  return path.join(
+    config.modRequest.platformProjectRoot,
+    projectName,
+    fileName
+  )
 }
 
 // @ts-ignore
