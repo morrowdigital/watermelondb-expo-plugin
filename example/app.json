@@ -11,9 +11,12 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/e2f5f187-c189-4364-9a79-c21671fa2618"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.wmlDB.app"
@@ -29,7 +32,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "../app.plugin",
+      "@morrowdigital/watermelondb-expo-plugin",
       [
         "expo-build-properties",
         {
@@ -38,6 +41,14 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e2f5f187-c189-4364-9a79-c21671fa2618"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }
