@@ -4,10 +4,10 @@
   "main": "build/withWatermelon.js",
   "types": "build/withWatermelon.d.ts",
   "license": "MIT",
-  "git": "https://github.com/TheLonelyAstronaut/watermelondb-expo-plugin.git",
-  "homepage": "https://github.com/TheLonelyAstronaut/watermelondb-expo-plugin#readme",
+  "git": "https://github.com/morrowdigital/watermelondb-expo-plugin.git",
+  "homepage": "https://github.com/morrowdigital/watermelondb-expo-plugin#readme",
   "bugs": {
-    "url": "https://github.com/TheLonelyAstronaut/watermelondb-expo-plugin/issues"
+    "url": "https://github.com/morrowdigital/watermelondb-expo-plugin/issues"
   },
   "keywords": [
     "watermelondb",
@@ -39,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheLonelyAstronaut/watermelondb-expo-plugin.git"
+    "url": "git+https://github.com/morrowdigital/watermelondb-expo-plugin.git"
   },
   "author": "Morrow"
 }
