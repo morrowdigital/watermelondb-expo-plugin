@@ -52,7 +52,7 @@ function setAppDelegate(config: ExportedConfigWithProps) {
         `#import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>"\n
+#import <React/RCTBridgeModule.h>\n
             ` + contents;
 
       await fs.writeFile(filePath, updated);
