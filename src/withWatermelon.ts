@@ -38,30 +38,6 @@ function setAndroidMainApplication(config: ExportedConfigWithProps) {
   ]);
 }
 
-/**
- * Platform: iOS
- *  */
-function setAppDelegate(config: ExportedConfigWithProps) {
-  return withDangerousMod(config, [
-    "ios",
-    async (config) => {
-      const filePath = getPlatformProjectFilePath(config, 'AppDelegate.h')
-      const contents = await fs.readFile(filePath, "utf-8");
-
-      let updated =
-        `#import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
-#import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>\n
-            ` + contents;
-
-      await fs.writeFile(filePath, updated);
-
-      return config;
-    },
-  ]);
-}
-
 function setWmelonBridgingHeader(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "ios",
@@ -167,7 +143,6 @@ export default (config, options) => {
   // config = setAppSettingBuildGradle(config);
   // config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
-  config = setAppDelegate(config);
   config = setWmelonBridgingHeader(config);
   config = withCocoaPods(config);
   if (options?.excludeSimulatorArchitectures ?? true) {
