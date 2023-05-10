@@ -26,6 +26,46 @@ function setAndroidMainApplication(config) {
     ]);
 }
 /**
+ * Platform: Android
+ *  */
+function addFlipperDb(config, databases) {
+    return (0, config_plugins_1.withDangerousMod)(config, [
+        "android",
+        async (config) => {
+            // short circuit if no databases specified
+            if (!databases?.length)
+                return config;
+            const root = config.modRequest.platformProjectRoot;
+            const filePath = `${root}/app/src/debug/java/${config?.android?.package?.replace(/\./g, "/")}/ReactNativeFlipper.java`;
+            const contents = await fs.readFile(filePath, "utf-8");
+            // Add imports
+            let updated = (0, insertLinesHelper_1.insertLinesHelper)(`import com.facebook.flipper.plugins.databases.impl.SqliteDatabaseDriver;
+import com.facebook.flipper.plugins.databases.impl.SqliteDatabaseProvider;
+import java.io.File;
+import java.util.List;
+import java.util.ArrayList;`, "import okhttp3.OkHttpClient;", contents);
+            // Replace DatabasesFlipperPlugin with custom driver
+            const addDatabases = databases
+                .map((d) => `databaseFiles.add(new File(context.getDatabasePath("${d}").getPath().replace("/databases", "")));`)
+                .join("\n          ");
+            updated = (0, insertLinesHelper_1.insertLinesHelper)(`      client.addPlugin(new DatabasesFlipperPlugin(new SqliteDatabaseDriver(context, new SqliteDatabaseProvider() {
+        @Override
+        public List<File> getDatabaseFiles() {
+          List<File> databaseFiles = new ArrayList<>();
+          for (String databaseName : context.databaseList()) {
+            databaseFiles.add(context.getDatabasePath(databaseName));
+          }
+          ${addDatabases}
+          return databaseFiles;
+        }
+      })));`, "client.addPlugin(new DatabasesFlipperPlugin(context));", updated, 0, // replace original plugin
+            1);
+            await fs.writeFile(filePath, updated);
+            return config;
+        },
+    ]);
+}
+/**
  * Platform: iOS
  *  */
 function setAppDelegate(config) {
@@ -127,6 +167,7 @@ exports.default = (config, options) => {
     // config = setAppSettingBuildGradle(config);
     // config = setAppBuildGradle(config);
     config = setAndroidMainApplication(config);
+    config = addFlipperDb(config, options?.databases ?? []);
     config = setAppDelegate(config);
     config = setWmelonBridgingHeader(config);
     config = withCocoaPods(config);

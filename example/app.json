@@ -32,7 +32,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@morrowdigital/watermelondb-expo-plugin",
+      [
+        "@morrowdigital/watermelondb-expo-plugin",
+        {
+          "databases": ["morrow.db"]
+        }
+      ],
       [
         "expo-build-properties",
         {

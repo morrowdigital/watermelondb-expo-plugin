@@ -21,7 +21,13 @@ In your app.json `plugins` array:
 
 ```json
 {
-  "plugins": ["@morrowdigital/watermelondb-expo-plugin",
+  "plugins": [
+      [
+        "@morrowdigital/watermelondb-expo-plugin",
+        {
+          "databases": ["morrow.db"]
+        }
+      ],
       [
         "expo-build-properties",
         {
