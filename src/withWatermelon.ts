@@ -102,33 +102,6 @@ import java.util.ArrayList;`,
   ]);
 }
 
-/**
- * Platform: iOS
- *  */
-function setAppDelegate(config: ExportedConfigWithProps) {
-  return withDangerousMod(config, [
-    "ios",
-    async (config) => {
-      const filePath = getPlatformProjectFilePath(config, 'AppDelegate.h')
-      const contents = await fs.readFile(filePath, "utf-8");
-
-      let updated =
-        `#import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
-#import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>
-
-// Silence warning
-#import "../../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/Bridging.h"\n
-            ` + contents;
-
-      await fs.writeFile(filePath, updated);
-
-      return config;
-    },
-  ]);
-}
-
 function setWmelonBridgingHeader(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "ios",
@@ -172,7 +145,7 @@ const withCocoaPods = (config: ExportedConfigWithProps) => {
         slicedContent[0] += `\n
   pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-  pod 'simdjson', path: '../node_modules/@nozbe/simdjson'\n\n  `;
+  pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
         await fs.writeFile(filePath, slicedContent.join(patchKey));
       } else {
         throw new Error("Please make sure you have watermelondb installed");
@@ -235,7 +208,6 @@ export default (config, options) => {
   // config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
   config = addFlipperDb(config, options?.databases ?? []);
-  config = setAppDelegate(config);
   config = setWmelonBridgingHeader(config);
   config = withCocoaPods(config);
   if (options?.excludeSimulatorArchitectures ?? true) {
