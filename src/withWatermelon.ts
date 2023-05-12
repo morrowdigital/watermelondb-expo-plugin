@@ -106,7 +106,7 @@ function setWmelonBridgingHeader(config: ExportedConfigWithProps) {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
-      const filePath = getPlatformProjectFilePath(config, 'wmelon.swift')
+      const filePath = getPlatformProjectFilePath(config, "wmelon.swift");
       const contents = `
 //
 //  water.swift
@@ -193,13 +193,17 @@ function isWatermelonDBInstalled(projectRoot: string) {
   return resolved ? path.dirname(resolved) : null;
 }
 
-function getPlatformProjectFilePath(config: ExportedConfigWithProps, fileName: string) {
-  const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, '')
+function getPlatformProjectFilePath(
+  config: ExportedConfigWithProps,
+  fileName: string
+) {
+  const projectName =
+    config.modRequest.projectName || config.name.replace(/[- ]/g, "");
   return path.join(
     config.modRequest.platformProjectRoot,
     projectName,
     fileName
-  )
+  );
 }
 
 // @ts-ignore

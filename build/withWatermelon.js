@@ -65,33 +65,11 @@ import java.util.ArrayList;`, "import okhttp3.OkHttpClient;", contents);
         },
     ]);
 }
-/**
- * Platform: iOS
- *  */
-function setAppDelegate(config) {
-    return (0, config_plugins_1.withDangerousMod)(config, [
-        "ios",
-        async (config) => {
-            const filePath = getPlatformProjectFilePath(config, 'AppDelegate.h');
-            const contents = await fs.readFile(filePath, "utf-8");
-            let updated = `#import <React/RCTBundleURLProvider.h>
-#import <React/RCTRootView.h>
-#import <React/RCTViewManager.h>
-#import <React/RCTBridgeModule.h>
-
-// Silence warning
-#import "../../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/Bridging.h"\n
-            ` + contents;
-            await fs.writeFile(filePath, updated);
-            return config;
-        },
-    ]);
-}
 function setWmelonBridgingHeader(config) {
     return (0, config_plugins_1.withDangerousMod)(config, [
         "ios",
         async (config) => {
-            const filePath = getPlatformProjectFilePath(config, 'wmelon.swift');
+            const filePath = getPlatformProjectFilePath(config, "wmelon.swift");
             const contents = `
 //
 //  water.swift
@@ -159,7 +137,7 @@ function isWatermelonDBInstalled(projectRoot) {
     return resolved ? path_1.default.dirname(resolved) : null;
 }
 function getPlatformProjectFilePath(config, fileName) {
-    const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, '');
+    const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, "");
     return path_1.default.join(config.modRequest.platformProjectRoot, projectName, fileName);
 }
 // @ts-ignore
@@ -168,7 +146,6 @@ exports.default = (config, options) => {
     // config = setAppBuildGradle(config);
     config = setAndroidMainApplication(config);
     config = addFlipperDb(config, options?.databases ?? []);
-    config = setAppDelegate(config);
     config = setWmelonBridgingHeader(config);
     config = withCocoaPods(config);
     if (options?.excludeSimulatorArchitectures ?? true) {
