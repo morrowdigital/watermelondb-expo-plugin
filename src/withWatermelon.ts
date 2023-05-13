@@ -214,8 +214,8 @@ export default (config, options) => {
   config = addFlipperDb(config, options?.databases ?? []);
   config = setWmelonBridgingHeader(config);
   config = withCocoaPods(config);
-  if (options?.excludeSimulatorArchitectures ?? true) {
-    config = withExcludedSimulatorArchitectures(config);
-  }
+
+  config = withExcludedSimulatorArchitectures(config);
+
   return config;
 };
