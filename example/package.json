@@ -7,7 +7,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@morrowdigital/watermelondb-expo-plugin": "^2.1.0",
+    "@morrowdigital/watermelondb-expo-plugin": "^2.1.2",
     "@nozbe/watermelondb": "^0.26.0",
     "expo": "~48.0.15",
     "expo-build-properties": "~0.5.1",
