@@ -39,3 +39,7 @@ In your app.json `plugins` array:
   ]
 }
 ```
+
+## Guide
+
+We've written a more detailed guide on how to use this plugin within your project: https://www.themorrow.digital/blog/how-to-use-watermelondb-with-react-native-expo
