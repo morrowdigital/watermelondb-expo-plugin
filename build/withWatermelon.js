@@ -98,7 +98,14 @@ const withCocoaPods = (config) => {
   pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
   pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
-                await fs.writeFile(filePath, slicedContent.join(patchKey));
+                const newContent = slicedContent.join(patchKey);
+                await fs.writeFile(filePath, newContent);
+                const postPatchKey = "target_installation_result.resource_bundle_targets.each do |resource_bundle_target|";
+                const postPatchSlicedContent = newContent.split(postPatchKey);
+                postPatchSlicedContent[0] += `target_installation_result.native_target.build_configurations.each do |config|
+          config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      end\n      `;
+                await fs.writeFile(filePath, postPatchSlicedContent.join(postPatchKey));
             }
             else {
                 throw new Error("Please make sure you have watermelondb installed");
