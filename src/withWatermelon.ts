@@ -1,8 +1,12 @@
 import {
   withXcodeProject,
   withDangerousMod,
+  withSettingsGradle,
+  withAppBuildGradle,
+  withMainApplication,
   ExportedConfigWithProps,
 } from "@expo/config-plugins";
+import { ExpoConfig } from "@expo/config-types";
 import filesys from "fs";
 import path from "path";
 import resolveFrom from "resolve-from";
@@ -206,13 +210,96 @@ function getPlatformProjectFilePath(
   );
 }
 
+const withWatermelonDBAndroidJSI = (config: ExpoConfig) => {
+  function settingGradle(gradleConfig: ExpoConfig) {
+    return withSettingsGradle(gradleConfig, (mod) => {
+      if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
+        mod.modResults.contents += `
+          include ':watermelondb-jsi'
+          project(':watermelondb-jsi').projectDir =
+            new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android-jsi')
+        `;
+      }
+      return mod;
+    });
+  }
+
+  function buildGradle(gradleConfig: ExpoConfig) {
+    return withAppBuildGradle(gradleConfig, (mod) => {
+      if (
+          !mod.modResults.contents.includes("pickFirst '**/libc++_shared.so'")
+      ) {
+        mod.modResults.contents = mod.modResults.contents.replace(
+            'android {',
+            `
+          android {
+            packagingOptions {
+               pickFirst '**/libc++_shared.so' 
+            }
+          `
+        );
+      }
+      if (
+          !mod.modResults.contents.includes(
+              "implementation project(':watermelondb-jsi')"
+          )
+      ) {
+        mod.modResults.contents = mod.modResults.contents.replace(
+            'dependencies {',
+            `
+          dependencies {
+            implementation project(':watermelondb-jsi')
+          `
+        );
+      }
+      return mod;
+    });
+  }
+
+  function mainApplication(mainAppConfig: ExpoConfig) {
+    return withMainApplication(mainAppConfig, (mod) => {
+      if (
+          !mod.modResults.contents.includes(
+              'import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;'
+          )
+      ) {
+        mod.modResults.contents = mod.modResults.contents.replace(
+            'import com.nozbe.watermelondb.WatermelonDBPackage;',
+            `
+          import com.nozbe.watermelondb.WatermelonDBPackage;
+          import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
+          import com.facebook.react.bridge.JSIModulePackage;
+        `
+        );
+      }
+      if (
+          !mod.modResults.contents.includes('return new WatermelonDBJSIPackage()')
+      ) {
+        mod.modResults.contents = mod.modResults.contents.replace(
+            'new ReactNativeHostWrapper(this, new DefaultReactNativeHost(this) {',
+            `
+          new ReactNativeHostWrapper(this, new DefaultReactNativeHost(this) {
+            @Override
+             protected JSIModulePackage getJSIModulePackage() {
+               return new WatermelonDBJSIPackage(); 
+             }
+          `
+        );
+      }
+      return mod;
+    });
+  }
+
+  return mainApplication(settingGradle(buildGradle(config)));
+};
+
 // @ts-ignore
 export default (config, options) => {
   // config = setAppSettingBuildGradle(config);
   // config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
   config = addFlipperDb(config, options?.databases ?? []);
-  config = setWmelonBridgingHeader(config);
+  config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config));
   config = withCocoaPods(config);
 
   config = withExcludedSimulatorArchitectures(config);
