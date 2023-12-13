@@ -44,6 +44,8 @@ In your app.json `plugins` array:
 
 ### Example with disabled JSI
 
+you can use the `disableJsi: true` options, to disable JSI support if you need to (not recommended).
+
 ```json
 {
   "plugins": [
