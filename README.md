@@ -3,7 +3,7 @@ Config plugin to auto configure `@nozbe/watermelondb`
 
 ## Install
 
-> Tested against Expo SDK 47, 48 and 49
+> Tested against Expo SDK 48 and 49
 
 ```
 yarn add @morrowdigital/watermelondb-expo-plugin
@@ -14,7 +14,7 @@ yarn add @morrowdigital/watermelondb-expo-plugin
 
 After installing this npm package, add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`plugins`](https://docs.expo.io/versions/latest/config/app/#plugins) array of your `app.json` or `app.config.js`. Then rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
-If you are using Proguard, add the rule to `-keep class com.nozbe.watermelondb.** { *; }` in `expo-build-properties` 
+If you are using Proguard (and you DON'T disable JSI), add the rule to `-keep class com.nozbe.watermelondb.** { *; }` in `expo-build-properties` 
 
 ## Example
 
@@ -35,6 +35,30 @@ In your app.json `plugins` array:
           "android": {
             "kotlinVersion": "1.6.10",
             "extraProguardRules":  "-keep class com.nozbe.watermelondb.** { *; }"
+          }
+        }
+      ]
+  ]
+}
+```
+
+### Example with disabled JSI
+
+```json
+{
+  "plugins": [
+      [
+        "@morrowdigital/watermelondb-expo-plugin",
+        {
+          "databases": ["morrow.db"],
+          "disableJsi": true
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "1.6.10",
           }
         }
       ]

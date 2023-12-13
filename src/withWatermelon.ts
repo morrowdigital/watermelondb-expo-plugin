@@ -14,6 +14,11 @@ import { insertLinesHelper } from "./insertLinesHelper";
 
 const fs = filesys.promises;
 
+type Options = {
+  disableJsi?: boolean;
+  databases?: string[];
+}
+
 /**
  * Platform: Android
  *  */
@@ -210,7 +215,11 @@ function getPlatformProjectFilePath(
   );
 }
 
-const withWatermelonDBAndroidJSI = (config: ExpoConfig) => {
+const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
+  if (options?.disableJsi === true) {
+    return config;
+  };
+
   function settingGradle(gradleConfig: ExpoConfig) {
     return withSettingsGradle(gradleConfig, (mod) => {
       if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
@@ -295,11 +304,9 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig) => {
 
 // @ts-ignore
 export default (config, options) => {
-  // config = setAppSettingBuildGradle(config);
-  // config = setAppBuildGradle(config);
   config = setAndroidMainApplication(config);
   config = addFlipperDb(config, options?.databases ?? []);
-  config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config));
+  config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config),options);
   config = withCocoaPods(config);
 
   config = withExcludedSimulatorArchitectures(config);

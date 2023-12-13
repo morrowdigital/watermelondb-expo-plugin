@@ -140,7 +140,12 @@ function getPlatformProjectFilePath(config, fileName) {
     const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, "");
     return path_1.default.join(config.modRequest.platformProjectRoot, projectName, fileName);
 }
-const withWatermelonDBAndroidJSI = (config) => {
+const withWatermelonDBAndroidJSI = (config, options) => {
+    if (options?.disableJsi === true) {
+        return config;
+    }
+    ;
+    console.log('adding SJI support');
     function settingGradle(gradleConfig) {
         return (0, config_plugins_1.withSettingsGradle)(gradleConfig, (mod) => {
             if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
@@ -197,11 +202,9 @@ const withWatermelonDBAndroidJSI = (config) => {
 };
 // @ts-ignore
 exports.default = (config, options) => {
-    // config = setAppSettingBuildGradle(config);
-    // config = setAppBuildGradle(config);
     config = setAndroidMainApplication(config);
     config = addFlipperDb(config, options?.databases ?? []);
-    config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config));
+    config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config), options);
     config = withCocoaPods(config);
     config = withExcludedSimulatorArchitectures(config);
     return config;
