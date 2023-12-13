@@ -75,3 +75,5 @@ dist/
 
 ios/
 android/
+
+.yarn/cache

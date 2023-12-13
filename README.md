@@ -3,7 +3,7 @@ Config plugin to auto configure `@nozbe/watermelondb`
 
 ## Install
 
-> Tested against Expo SDK 47, 48 and 49
+> Tested against Expo SDK 50
 
 ```
 yarn add @morrowdigital/watermelondb-expo-plugin
@@ -14,7 +14,9 @@ yarn add @morrowdigital/watermelondb-expo-plugin
 
 After installing this npm package, add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`plugins`](https://docs.expo.io/versions/latest/config/app/#plugins) array of your `app.json` or `app.config.js`. Then rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
-If you are using Proguard, add the rule to `-keep class com.nozbe.watermelondb.** { *; }` in `expo-build-properties` 
+If you are using Proguard (and you DON'T disable JSI), add the rule to `-keep class com.nozbe.watermelondb.** { *; }` in `expo-build-properties` 
+
+You also need to add the packaging options pick-first for android.
 
 ## Example
 
@@ -24,17 +26,18 @@ In your app.json `plugins` array:
 {
   "plugins": [
       [
-        "@morrowdigital/watermelondb-expo-plugin",
-        {
-          "databases": ["morrow.db"]
-        }
+        "@morrowdigital/watermelondb-expo-plugin"
       ],
       [
         "expo-build-properties",
         {
           "android": {
             "kotlinVersion": "1.6.10",
-            "extraProguardRules":  "-keep class com.nozbe.watermelondb.** { *; }"
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
+            }
           }
         }
       ]
@@ -42,6 +45,4 @@ In your app.json `plugins` array:
 }
 ```
 
-## Guide
-
-We've written a more detailed guide on how to use this plugin within your project: https://www.themorrow.digital/blog/how-to-use-watermelondb-with-react-native-expo
+Note: This plugin enables by default the watermelon JSI interface in Android.
