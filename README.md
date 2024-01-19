@@ -14,8 +14,6 @@ yarn add @morrowdigital/watermelondb-expo-plugin
 
 After installing this npm package, add the [config plugin](https://docs.expo.io/guides/config-plugins/) to the [`plugins`](https://docs.expo.io/versions/latest/config/app/#plugins) array of your `app.json` or `app.config.js`. Then rebuild your app as described in the ["Adding custom native code"](https://docs.expo.io/workflow/customizing/) guide.
 
-If you are using Proguard (and you DON'T disable JSI), add the rule to `-keep class com.nozbe.watermelondb.** { *; }` in `expo-build-properties` 
-
 You also need to add the packaging options pick-first for android.
 
 ## Example
