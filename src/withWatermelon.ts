@@ -205,7 +205,7 @@ import java.util.ArrayList;`,
   ]);
 }
 
-function setWmelonBridgingHeader(config: ExportedConfigWithProps) {
+function setWmelonBridgingHeader(config: ExportedConfigWithProps): ExpoConfig {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
@@ -224,7 +224,7 @@ import Foundation`;
 
       return config;
     },
-  ]);
+  ]) as ExpoConfig;
 }
 
 const withCocoaPods = (config: ExportedConfigWithProps) => {
@@ -314,7 +314,7 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
     return config;
   };
 
-  function buildGradle(gradleConfig: ExpoConfig) {
+  function buildGradle(gradleConfig: ExpoConfig): ExpoConfig {
     return withAppBuildGradle(gradleConfig, (mod) => {
       if (
           !mod.modResults.contents.includes("pickFirst '**/libc++_shared.so'")
@@ -343,10 +343,10 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
         );
       }
       return mod;
-    });
+    }) as ExpoConfig;
   }
 
-  function mainApplication(mainAppConfig: ExpoConfig) {
+  function mainApplication(mainAppConfig: ExpoConfig): ExpoConfig {
     return withMainApplication(mainAppConfig, (mod) => {
       if (
           !mod.modResults.contents.includes(
@@ -377,7 +377,7 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
         );
       }
       return mod;
-    });
+    }) as ExpoConfig;
   }
 
   return mainApplication(settingGradle(buildGradle(config)));

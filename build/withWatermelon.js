@@ -11,7 +11,7 @@ const resolve_from_1 = __importDefault(require("resolve-from"));
 const insertLinesHelper_1 = require("./insertLinesHelper");
 const fs = fs_1.default.promises;
 /**
- * Platform: Android
+ * Version 50+
  *  */
 function setAndroidMainApplication(config) {
     return (0, config_plugins_1.withDangerousMod)(config, [
@@ -40,27 +40,6 @@ function settingGradle(gradleConfig) {
         return mod;
     });
 }
-function gradleProperties(gradleConfig) {
-    return (0, config_plugins_1.withGradleProperties)(gradleConfig, (mod) => {
-        const packagingOptions = mod.modResults.find(item => item.type === 'property' && item.key === 'android.packagingOptions.pickFirst');
-        // if packagingOptions is not set, set it
-        if (!packagingOptions) {
-            mod.modResults.push({
-                type: "property",
-                key: "android.packagingOptions.pickFirst",
-                value: "lib/x86_64/libjsc.so"
-            });
-            return mod;
-        }
-        if (packagingOptions.type === 'property') {
-            // if packagingOptions is set but does not include libjsc.so, add it
-            if (!packagingOptions.value.includes('lib/x86_64/libjsc.so')) {
-                packagingOptions.value += ', lib/x86_64/libjsc.so';
-            }
-        }
-        return mod;
-    });
-}
 function buildGradle(config) {
     return (0, config_plugins_1.withAppBuildGradle)(config, (mod) => {
         const newContents = mod.modResults.contents.replace('dependencies {', `dependencies {
@@ -82,16 +61,6 @@ const cocoaPods = (config) => {
     pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
     
     post_install do |installer|`);
-            // const watermelonPath = isWatermelonDBInstalled(
-            //     config.modRequest.projectRoot
-            // );
-            // if (watermelonPath) {
-            //       const patchKey = "post_install";
-            //       const slicedContent = contents.split(patchKey);
-            //       slicedContent[0] += `\n
-            // pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-            // pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-            // pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
             await fs.writeFile(filePath, newContents);
             return config;
         },
@@ -124,6 +93,9 @@ function proGuardRules(config) {
             return config;
         }]);
 }
+/**
+ * Version 50+ finish
+ *  */
 /**
  * Platform: Android
  *  */
@@ -286,20 +258,18 @@ const withWatermelonDBAndroidJSI = (config, options) => {
     }
     return mainApplication(settingGradle(buildGradle(config)));
 };
-/** Adds JSI support for SDK 50+ */
+// @ts-ignore
 function withSDK50(config) {
-    config = settingGradle(config);
-    // config = gradleProperties(config);
-    config = buildGradle(config);
-    config = proGuardRules(config);
-    config = mainApplication(config);
-    config = cocoaPods(config);
-    return config;
+    let currentConfig = settingGradle(config);
+    currentConfig = buildGradle(currentConfig);
+    currentConfig = proGuardRules(currentConfig);
+    currentConfig = mainApplication(currentConfig);
+    currentConfig = cocoaPods(currentConfig);
+    return currentConfig;
 }
 exports.withSDK50 = withSDK50;
 // @ts-ignore
 exports.default = (config, options) => {
-    // TODO: respect options.disableJsi
     if (config.sdkVersion >= '50.0.0') {
         return withSDK50(config);
     }
