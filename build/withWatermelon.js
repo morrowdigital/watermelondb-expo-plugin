@@ -260,10 +260,12 @@ const withWatermelonDBAndroidJSI = (config, options) => {
 };
 // @ts-ignore
 function withSDK50(config) {
+    // Android
     let currentConfig = settingGradle(config);
     currentConfig = buildGradle(currentConfig);
     currentConfig = proGuardRules(currentConfig);
     currentConfig = mainApplication(currentConfig);
+    // iOS
     currentConfig = setWmelonBridgingHeader(currentConfig);
     currentConfig = withCocoaPods(currentConfig);
     currentConfig = withExcludedSimulatorArchitectures(currentConfig);
