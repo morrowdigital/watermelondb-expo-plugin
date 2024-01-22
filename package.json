@@ -39,6 +39,5 @@
     "type": "git",
     "url": "git+https://github.com/morrowdigital/watermelondb-expo-plugin.git"
   },
-  "author": "Morrow",
-  "packageManager": "yarn@4.0.2"
+  "author": "Morrow"
 }
