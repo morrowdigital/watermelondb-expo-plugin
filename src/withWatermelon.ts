@@ -205,7 +205,7 @@ import java.util.ArrayList;`,
   ]);
 }
 
-function setWmelonBridgingHeader(config: ExportedConfigWithProps): ExpoConfig {
+function setWmelonBridgingHeader(config: ExpoConfig): ExpoConfig {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
@@ -227,7 +227,7 @@ import Foundation`;
   ]) as ExpoConfig;
 }
 
-const withCocoaPods = (config: ExportedConfigWithProps) => {
+const withCocoaPods = (config: ExpoConfig): ExpoConfig => {
   return withDangerousMod(config, [
     "ios",
     async (config) => {
@@ -255,7 +255,7 @@ const withCocoaPods = (config: ExportedConfigWithProps) => {
       }
       return config;
     },
-  ]);
+  ]) as ExpoConfig;
 };
 
 /**
@@ -264,6 +264,7 @@ const withCocoaPods = (config: ExportedConfigWithProps) => {
  */
 // @ts-ignore
 function setExcludedArchitectures(project) {
+
   const configurations = project.pbxXCBuildConfigurationSection();
   // @ts-ignore
   for (const { buildSettings } of Object.values(configurations || {})) {
@@ -281,11 +282,11 @@ function setExcludedArchitectures(project) {
   return project;
 }
 
-const withExcludedSimulatorArchitectures = (c: ExportedConfigWithProps) => {
+const withExcludedSimulatorArchitectures = (c: ExpoConfig) : ExpoConfig=> {
   return withXcodeProject(c, (config) => {
     config.modResults = setExcludedArchitectures(config.modResults);
     return config;
-  });
+  }) as ExpoConfig;
 };
 
 function isWatermelonDBInstalled(projectRoot: string) {
@@ -389,7 +390,9 @@ export function withSDK50(config: ExpoConfig): ExpoConfig {
   currentConfig = buildGradle(currentConfig);
   currentConfig = proGuardRules(currentConfig);
   currentConfig = mainApplication(currentConfig);
-  currentConfig = cocoaPods(currentConfig);
+  currentConfig = setWmelonBridgingHeader(currentConfig);
+  currentConfig = withCocoaPods(currentConfig);
+  currentConfig = withExcludedSimulatorArchitectures(currentConfig);
   return currentConfig as ExpoConfig;
 }
 

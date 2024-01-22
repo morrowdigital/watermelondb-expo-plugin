@@ -264,7 +264,9 @@ function withSDK50(config) {
     currentConfig = buildGradle(currentConfig);
     currentConfig = proGuardRules(currentConfig);
     currentConfig = mainApplication(currentConfig);
-    currentConfig = cocoaPods(currentConfig);
+    currentConfig = setWmelonBridgingHeader(currentConfig);
+    currentConfig = withCocoaPods(currentConfig);
+    currentConfig = withExcludedSimulatorArchitectures(currentConfig);
     return currentConfig;
 }
 exports.withSDK50 = withSDK50;
