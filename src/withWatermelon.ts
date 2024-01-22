@@ -386,10 +386,12 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
 
 // @ts-ignore
 export function withSDK50(config: ExpoConfig): ExpoConfig {
+  // Android
   let currentConfig = settingGradle(config);
   currentConfig = buildGradle(currentConfig);
   currentConfig = proGuardRules(currentConfig);
   currentConfig = mainApplication(currentConfig);
+  // iOS
   currentConfig = setWmelonBridgingHeader(currentConfig);
   currentConfig = withCocoaPods(currentConfig);
   currentConfig = withExcludedSimulatorArchitectures(currentConfig);
