@@ -18,6 +18,7 @@ const fs = filesys.promises;
 type Options = {
   disableJsi?: boolean;
   databases?: string[];
+  excludeSimArch?: boolean;
 }
 
 /**
@@ -144,7 +145,7 @@ function proGuardRules(config: ExpoConfig): ExpoConfig {
 /**
  * Platform: Android
  *  */
-function addFlipperDb(config: ExportedConfigWithProps, databases: string[]) {
+function addFlipperDb(config: ExpoConfig, databases: string[]) {
   return withDangerousMod(config, [
     "android",
     async (config) => {
@@ -202,7 +203,7 @@ import java.util.ArrayList;`,
 
       return config;
     },
-  ]);
+  ]) as ExpoConfig;
 }
 
 function setWmelonBridgingHeader(config: ExpoConfig): ExpoConfig {
@@ -384,24 +385,34 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
   return mainApplication(settingGradle(buildGradle(config)));
 };
 
+
 // @ts-ignore
-export function withSDK50(config: ExpoConfig): ExpoConfig {
-  // Android
-  let currentConfig = settingGradle(config);
-  currentConfig = buildGradle(currentConfig);
-  currentConfig = proGuardRules(currentConfig);
-  currentConfig = mainApplication(currentConfig);
-  // iOS
-  currentConfig = setWmelonBridgingHeader(currentConfig);
-  currentConfig = withCocoaPods(currentConfig);
-  currentConfig = withExcludedSimulatorArchitectures(currentConfig);
-  return currentConfig as ExpoConfig;
+export function withSDK50(options: Options) {
+  return (config: ExpoConfig): ExpoConfig => {
+    let currentConfig: ExpoConfig = config;
+    // Android
+    if (options?.disableJsi !== true) {
+      currentConfig = settingGradle(config);
+      currentConfig = buildGradle(currentConfig);
+      currentConfig = proGuardRules(currentConfig);
+      currentConfig = mainApplication(currentConfig);
+    }
+
+    // iOS
+    currentConfig = setWmelonBridgingHeader(currentConfig);
+    currentConfig = withCocoaPods(currentConfig);
+    if (options?.excludeSimArch === true) {
+      currentConfig = withExcludedSimulatorArchitectures(currentConfig);
+    }
+
+    return currentConfig as ExpoConfig;
+  }
 }
 
 // @ts-ignore
 export default (config, options) => {
   if (config.sdkVersion >= '50.0.0') {
-    return withSDK50(config);
+    return withSDK50(options)(config);
   };
 
   if (config.sdkVersion < '50.0.0') {
@@ -409,7 +420,6 @@ export default (config, options) => {
     config = addFlipperDb(config, options?.databases ?? []);
     config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config), options);
     config = withCocoaPods(config);
-
     config = withExcludedSimulatorArchitectures(config);
   }
 

@@ -259,23 +259,30 @@ const withWatermelonDBAndroidJSI = (config, options) => {
     return mainApplication(settingGradle(buildGradle(config)));
 };
 // @ts-ignore
-function withSDK50(config) {
-    // Android
-    let currentConfig = settingGradle(config);
-    currentConfig = buildGradle(currentConfig);
-    currentConfig = proGuardRules(currentConfig);
-    currentConfig = mainApplication(currentConfig);
-    // iOS
-    currentConfig = setWmelonBridgingHeader(currentConfig);
-    currentConfig = withCocoaPods(currentConfig);
-    currentConfig = withExcludedSimulatorArchitectures(currentConfig);
-    return currentConfig;
+function withSDK50(options) {
+    return (config) => {
+        let currentConfig = config;
+        // Android
+        if (options?.disableJsi !== true) {
+            currentConfig = settingGradle(config);
+            currentConfig = buildGradle(currentConfig);
+            currentConfig = proGuardRules(currentConfig);
+            currentConfig = mainApplication(currentConfig);
+        }
+        // iOS
+        currentConfig = setWmelonBridgingHeader(currentConfig);
+        currentConfig = withCocoaPods(currentConfig);
+        if (options?.excludeSimArch === true) {
+            currentConfig = withExcludedSimulatorArchitectures(currentConfig);
+        }
+        return currentConfig;
+    };
 }
 exports.withSDK50 = withSDK50;
 // @ts-ignore
 exports.default = (config, options) => {
     if (config.sdkVersion >= '50.0.0') {
-        return withSDK50(config);
+        return withSDK50(options)(config);
     }
     ;
     if (config.sdkVersion < '50.0.0') {
