@@ -1,6 +1,6 @@
 {
   "name": "@morrowdigital/watermelondb-expo-plugin",
-  "version": "2.3.0-beta2",
+  "version": "2.3.0",
   "main": "build/withWatermelon.js",
   "types": "build/withWatermelon.d.ts",
   "license": "MIT",
