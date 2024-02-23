@@ -2223,7 +2223,7 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@morrowdigital/watermelondb-expo-plugin@^2.1.2":
+"@morrowdigital/watermelondb-expo-plugin@^2.3.1":
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/@morrowdigital/watermelondb-expo-plugin/-/watermelondb-expo-plugin-2.3.1.tgz#d8be1baebfd0016bb078f4a25334b8c0da44bfed"
   integrity sha512-XKIk6/r79u6z5PnGKkOqYKzERdgTHglkMKt2h9j7LS8eLW1p46yYYq2EzwqTe7HnjDXPNDGOlU9K9Y6c9+2u+w==
