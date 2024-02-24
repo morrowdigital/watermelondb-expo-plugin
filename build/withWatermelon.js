@@ -60,7 +60,7 @@ const cocoaPods = (config) => {
             const newContents = contents.replace('post_install do |installer|', `
           
     # WatermelonDB dependency
-    pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
+    pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`))              
     
     post_install do |installer|`);
             await fs.writeFile(filePath, newContents);
@@ -168,9 +168,7 @@ const withCocoaPods = (config) => {
                 const patchKey = "post_install";
                 const slicedContent = contents.split(patchKey);
                 slicedContent[0] += `\n
-  pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-  pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
+  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`))\n\n  `;
                 await fs.writeFile(filePath, slicedContent.join(patchKey));
             }
             else {
