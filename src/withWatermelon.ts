@@ -56,8 +56,10 @@ function settingGradle(gradleConfig: ExpoConfig): ExpoConfig {
     if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
       mod.modResults.contents += `
           include ':watermelondb-jsi'
-          project(':watermelondb-jsi').projectDir =
-            new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android-jsi')
+          project(':watermelondb-jsi').projectDir = new File([
+              "node", "--print", 
+              "require.resolve('@nozbe/watermelondb/package.json')"
+          ].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
         `;
     }
     return mod;
