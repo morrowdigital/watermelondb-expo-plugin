@@ -225,7 +225,7 @@ const withCocoaPods = (config: ExpoConfig): ExpoConfig => {
         const patchKey = "post_install";
         const slicedContent = contents.split(patchKey);
         slicedContent[0] += `\n
-  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`))\n\n  `;
+  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`)), :modular_headers => true \n\n  `;
         await fs.writeFile(filePath, slicedContent.join(patchKey));
       } else {
         throw new Error("Please make sure you have watermelondb installed");
