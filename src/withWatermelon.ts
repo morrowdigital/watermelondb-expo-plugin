@@ -375,7 +375,6 @@ export function withSDK50(options: Options) {
     }
 
     // iOS
-    currentConfig = setWmelonBridgingHeader(currentConfig);
     currentConfig = withCocoaPods(currentConfig);
     if (options?.excludeSimArch === true) {
       currentConfig = withExcludedSimulatorArchitectures(currentConfig);
