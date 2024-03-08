@@ -80,30 +80,6 @@ function buildGradle(config: ExpoConfig): ExpoConfig {
   }) as ExpoConfig;
 }
 
-const cocoaPods = (config: ExpoConfig): ExpoConfig => {
-  return withDangerousMod(config, [
-    "ios",
-    async (config) => {
-      const filePath = path.join(
-          config.modRequest.platformProjectRoot,
-          "Podfile"
-      );
-
-      const contents = await fs.readFile(filePath, "utf-8");
-      const newContents=contents.replace(
-          'post_install do |installer|',`
-          
-    # WatermelonDB dependency
-    pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`))              
-    
-    post_install do |installer|`
-      );
-        await fs.writeFile(filePath, newContents);
-        return config;
-    },
-  ]) as ExpoConfig;
-};
-
 function mainApplication(config: ExpoConfig): ExpoConfig {
   return withMainApplication(config, (mod) => {
     mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
