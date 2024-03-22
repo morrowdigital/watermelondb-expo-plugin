@@ -18,12 +18,14 @@ jobs:
           ref: beta
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 20
 
       - name: Install dependencies
-        run: yarn install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
