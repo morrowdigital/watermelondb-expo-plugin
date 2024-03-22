@@ -32,8 +32,12 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Commit and push
-        uses: actions/setup-git@v1
+      - name: Prepare Git
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Push changes
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
