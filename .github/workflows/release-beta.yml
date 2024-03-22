@@ -24,9 +24,10 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-
-      - name: Build and publish
-        run: |
-          npm publish --tag beta
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+
+      - name: Publish
+        run: |
+          npm publish --tag beta
