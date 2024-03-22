@@ -1,0 +1,45 @@
+name: Publish Beta Package
+
+on:
+  workflow_dispatch:
+    branches:
+      - beta
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: Beta
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build and publish
+        run: |
+          yarn run build
+          npm version prerelease --preid=beta
+          npm publish --tag beta --dry-run
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Setup Git
+        uses: actions/setup-git@v1
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Bump version and publish beta package"
+          git push origin HEAD:beta
+
