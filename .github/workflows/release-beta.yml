@@ -27,20 +27,7 @@ jobs:
 
       - name: Build and publish
         run: |
+          npm version prerelease --preid=beta
           npm publish --tag beta --dry-run
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-#
-#      - name: Prepare Git
-#        uses: actions/checkout@v4
-#        with:
-#          persist-credentials: false
-#
-#      - name: Push changes
-#        run: |
-#          git config user.name "GitHub Actions"
-#          git config user.email "github-actions@github.com"
-#          git add .
-#          git commit -m "Bump version and publish beta package"
-#          git push origin HEAD:beta
-
