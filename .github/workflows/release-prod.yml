@@ -1,15 +1,15 @@
-name: Publish Beta Package
+name: Publish Production Package
 
 on:
   workflow_dispatch:
     branches:
-      - beta
+      - main
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment:
-      name: Beta
+      name: Production
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
 
       - name: Publish
         run: |
-          npm publish --tag beta
+          npm publish --tag latest
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
