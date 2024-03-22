@@ -391,7 +391,7 @@ export default (config, options) => {
   };
 
   if (config.sdkVersion < '50.0.0') {
-    config = setAndroidMainApplication(config);
+    // config = setAndroidMainApplication(config);
     config = addFlipperDb(config, options?.databases ?? []);
     config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config), options);
     config = withCocoaPods(config);

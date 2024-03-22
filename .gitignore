@@ -84,3 +84,4 @@ android/
 !.yarn/sdks
 !.yarn/versions
 
+.npmrc
