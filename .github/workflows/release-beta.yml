@@ -8,8 +8,8 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-#    environment:
-#      name: Beta
+    environment:
+      name: Beta
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
