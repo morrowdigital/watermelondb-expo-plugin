@@ -15,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-          ref: beta
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
@@ -29,7 +28,7 @@ jobs:
         run: |
           yarn run build
           npm version prerelease --preid=beta
-          npm publish --tag beta
+          npm publish --tag beta --dry-run
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
