@@ -17,6 +17,9 @@ jobs:
           persist-credentials: false
           ref: beta
 
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
