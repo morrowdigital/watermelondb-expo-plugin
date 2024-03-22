@@ -25,13 +25,13 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-#      - name: Build and publish
-#        run: |
-#          yarn run build
-#          npm version prerelease --preid=beta
-#          npm publish --tag beta --dry-run
-#        env:
-#          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Build and publish
+        run: |
+          yarn run build
+          npm version prerelease --preid=beta
+          npm publish --tag beta --dry-run
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 #
 #      - name: Prepare Git
 #        uses: actions/checkout@v4
