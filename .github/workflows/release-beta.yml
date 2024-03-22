@@ -28,7 +28,7 @@ jobs:
         run: |
           yarn run build
           npm version prerelease --preid=beta
-          npm publish --tag beta --dry-run
+          npm publish --tag beta
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
