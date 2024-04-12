@@ -66,13 +66,15 @@ function settingGradle(gradleConfig: ExpoConfig): ExpoConfig {
 
 function buildGradle(config: ExpoConfig): ExpoConfig {
   return withAppBuildGradle(config, (mod) => {
-    const newContents = mod.modResults.contents.replace(
-        'dependencies {',
-        `dependencies {
-        implementation project(':watermelondb-jsi')
-        `
-    )
-    mod.modResults.contents = newContents;
+    if (!mod.modResults.contents.includes("implementation project(':watermelondb-jsi')")) {
+      const newContents = mod.modResults.contents.replace(
+          'dependencies {',
+          `dependencies {
+          implementation project(':watermelondb-jsi')
+          `
+      )
+      mod.modResults.contents = newContents;
+    }
 
     return mod;
   }) as ExpoConfig;
@@ -104,21 +106,25 @@ const cocoaPods = (config: ExpoConfig): ExpoConfig => {
 
 function mainApplication(config: ExpoConfig): ExpoConfig {
   return withMainApplication(config, (mod) => {
-    mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
+    if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
+      mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
 import android.app.Application
 import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
 import com.facebook.react.bridge.JSIModulePackage;        
 `);
+    }
 
-    const newContents2 = mod.modResults.contents.replace(
+    if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
+      const newContents2 = mod.modResults.contents.replace(
         'override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED',
         `
         override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
         override fun getJSIModulePackage(): JSIModulePackage {
         return WatermelonDBJSIPackage()
         }`
-    )
-    mod.modResults.contents = newContents2;
+      )
+      mod.modResults.contents = newContents2;
+    }
 
     return mod;
   }) as ExpoConfig;
@@ -127,12 +133,14 @@ import com.facebook.react.bridge.JSIModulePackage;
 function proGuardRules(config: ExpoConfig): ExpoConfig {
   return withDangerousMod(config, ['android', async (config) => {
     const contents = await fs.readFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, 'utf-8');
-    const newContents = `
-    ${contents}
-    -keep class com.nozbe.watermelondb.** { *; }
-    `
+    if (!contents.includes("-keep class com.nozbe.watermelondb.** { *; }")) {
+      const newContents = `
+      ${contents}
+      -keep class com.nozbe.watermelondb.** { *; }
+      `
 
-    await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
+      await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
+    }
 
     return config;
   }]) as ExpoConfig;
@@ -244,13 +252,15 @@ const withCocoaPods = (config: ExpoConfig): ExpoConfig => {
       );
 
       if (watermelonPath) {
-        const patchKey = "post_install";
-        const slicedContent = contents.split(patchKey);
-        slicedContent[0] += `\n
+        if (!contents.includes("pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'")) {
+          const patchKey = "post_install";
+          const slicedContent = contents.split(patchKey);
+          slicedContent[0] += `\n
   pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
   pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
   pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
-        await fs.writeFile(filePath, slicedContent.join(patchKey));
+          await fs.writeFile(filePath, slicedContent.join(patchKey));
+        }
       } else {
         throw new Error("Please make sure you have watermelondb installed");
       }
