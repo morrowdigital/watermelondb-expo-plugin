@@ -56,8 +56,10 @@ function settingGradle(gradleConfig: ExpoConfig): ExpoConfig {
     if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
       mod.modResults.contents += `
           include ':watermelondb-jsi'
-          project(':watermelondb-jsi').projectDir =
-            new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android-jsi')
+          project(':watermelondb-jsi').projectDir = new File([
+              "node", "--print", 
+              "require.resolve('@nozbe/watermelondb/package.json')"
+          ].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
         `;
     }
     return mod;
@@ -77,30 +79,6 @@ function buildGradle(config: ExpoConfig): ExpoConfig {
     return mod;
   }) as ExpoConfig;
 }
-
-const cocoaPods = (config: ExpoConfig): ExpoConfig => {
-  return withDangerousMod(config, [
-    "ios",
-    async (config) => {
-      const filePath = path.join(
-          config.modRequest.platformProjectRoot,
-          "Podfile"
-      );
-
-      const contents = await fs.readFile(filePath, "utf-8");
-      const newContents=contents.replace(
-          'post_install do |installer|',`
-          
-    # WatermelonDB dependency
-    pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
-    
-    post_install do |installer|`
-      );
-        await fs.writeFile(filePath, newContents);
-        return config;
-    },
-  ]) as ExpoConfig;
-};
 
 function mainApplication(config: ExpoConfig): ExpoConfig {
   return withMainApplication(config, (mod) => {
@@ -247,9 +225,7 @@ const withCocoaPods = (config: ExpoConfig): ExpoConfig => {
         const patchKey = "post_install";
         const slicedContent = contents.split(patchKey);
         slicedContent[0] += `\n
-  pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-  pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
+  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`)), :modular_headers => true \n\n  `;
         await fs.writeFile(filePath, slicedContent.join(patchKey));
       } else {
         throw new Error("Please make sure you have watermelondb installed");
@@ -399,7 +375,6 @@ export function withSDK50(options: Options) {
     }
 
     // iOS
-    currentConfig = setWmelonBridgingHeader(currentConfig);
     currentConfig = withCocoaPods(currentConfig);
     if (options?.excludeSimArch === true) {
       currentConfig = withExcludedSimulatorArchitectures(currentConfig);
