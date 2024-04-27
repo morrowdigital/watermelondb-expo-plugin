@@ -82,6 +82,30 @@ function buildGradle(config: ExpoConfig): ExpoConfig {
   }) as ExpoConfig;
 }
 
+const cocoaPods = (config: ExpoConfig): ExpoConfig => {
+  return withDangerousMod(config, [
+    "ios",
+    async (config) => {
+      const filePath = path.join(
+          config.modRequest.platformProjectRoot,
+          "Podfile"
+      );
+
+      const contents = await fs.readFile(filePath, "utf-8");
+      const newContents=contents.replace(
+          'post_install do |installer|',`
+          
+    # WatermelonDB dependency
+    pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
+    
+    post_install do |installer|`
+      );
+        await fs.writeFile(filePath, newContents);
+        return config;
+    },
+  ]) as ExpoConfig;
+};
+
 function mainApplication(config: ExpoConfig): ExpoConfig {
   return withMainApplication(config, (mod) => {
     if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {

@@ -53,6 +53,23 @@ function buildGradle(config) {
         return mod;
     });
 }
+const cocoaPods = (config) => {
+    return (0, config_plugins_1.withDangerousMod)(config, [
+        "ios",
+        async (config) => {
+            const filePath = path_1.default.join(config.modRequest.platformProjectRoot, "Podfile");
+            const contents = await fs.readFile(filePath, "utf-8");
+            const newContents = contents.replace('post_install do |installer|', `
+          
+    # WatermelonDB dependency
+    pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
+    
+    post_install do |installer|`);
+            await fs.writeFile(filePath, newContents);
+            return config;
+        },
+    ]);
+};
 function mainApplication(config) {
     return (0, config_plugins_1.withMainApplication)(config, (mod) => {
         if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
