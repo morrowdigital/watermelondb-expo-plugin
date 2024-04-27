@@ -14,7 +14,9 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/e2f5f187-c189-4364-9a79-c21671fa2618"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.wmlDB.app"
@@ -31,16 +33,18 @@
     },
     "plugins": [
       [
-        "@morrowdigital/watermelondb-expo-plugin",
-        {
-          "databases": ["morrow.db"]
-        }
+        "@morrowdigital/watermelondb-expo-plugin"
       ],
       [
         "expo-build-properties",
         {
           "android": {
-            "kotlinVersion": "1.6.10"
+            "kotlinVersion": "1.6.10",
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
+            }
           }
         }
       ]

@@ -33,8 +33,10 @@ function settingGradle(gradleConfig) {
         if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
             mod.modResults.contents += `
           include ':watermelondb-jsi'
-          project(':watermelondb-jsi').projectDir =
-            new File(rootProject.projectDir, '../node_modules/@nozbe/watermelondb/native/android-jsi')
+          project(':watermelondb-jsi').projectDir = new File([
+              "node", "--print", 
+              "require.resolve('@nozbe/watermelondb/package.json')"
+          ].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
         `;
         }
         return mod;
@@ -42,62 +44,37 @@ function settingGradle(gradleConfig) {
 }
 function buildGradle(config) {
     return (0, config_plugins_1.withAppBuildGradle)(config, (mod) => {
-        if (!mod.modResults.contents.includes("implementation project(':watermelondb-jsi')")) {
-            const newContents = mod.modResults.contents.replace('dependencies {', `dependencies {
-            implementation project(':watermelondb-jsi')
-            `);
-            mod.modResults.contents = newContents;
-        }
+        const newContents = mod.modResults.contents.replace('dependencies {', `dependencies {
+        implementation project(':watermelondb-jsi')
+        `);
+        mod.modResults.contents = newContents;
         return mod;
     });
 }
-const cocoaPods = (config) => {
-    return (0, config_plugins_1.withDangerousMod)(config, [
-        "ios",
-        async (config) => {
-            const filePath = path_1.default.join(config.modRequest.platformProjectRoot, "Podfile");
-            const contents = await fs.readFile(filePath, "utf-8");
-            const newContents = contents.replace('post_install do |installer|', `
-          
-    # WatermelonDB dependency
-    pod 'simdjson', path: '../node_modules/@nozbe/simdjson', modular_headers: true          
-    
-    post_install do |installer|`);
-            await fs.writeFile(filePath, newContents);
-            return config;
-        },
-    ]);
-};
 function mainApplication(config) {
     return (0, config_plugins_1.withMainApplication)(config, (mod) => {
-        if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
-            mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
+        mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
 import android.app.Application
 import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
 import com.facebook.react.bridge.JSIModulePackage;        
 `);
-        }
-        if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
-            const newContents2 = mod.modResults.contents.replace('override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED', `
+        const newContents2 = mod.modResults.contents.replace('override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED', `
         override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
         override fun getJSIModulePackage(): JSIModulePackage {
         return WatermelonDBJSIPackage()
         }`);
-            mod.modResults.contents = newContents2;
-        }
+        mod.modResults.contents = newContents2;
         return mod;
     });
 }
 function proGuardRules(config) {
     return (0, config_plugins_1.withDangerousMod)(config, ['android', async (config) => {
             const contents = await fs.readFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, 'utf-8');
-            if (!contents.includes("-keep class com.nozbe.watermelondb.** { *; }")) {
-                const newContents = `
+            const newContents = `
     ${contents}
     -keep class com.nozbe.watermelondb.** { *; }
     `;
-                await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
-            }
+            await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
             return config;
         }]);
 }
@@ -171,15 +148,11 @@ const withCocoaPods = (config) => {
             const contents = await fs.readFile(filePath, "utf-8");
             const watermelonPath = isWatermelonDBInstalled(config.modRequest.projectRoot);
             if (watermelonPath) {
-                if (!contents.includes("pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'")) {
-                    const patchKey = "post_install";
-                    const slicedContent = contents.split(patchKey);
-                    slicedContent[0] += `\n
-  pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi', :modular_headers => true
-  pod 'simdjson', path: '../node_modules/@nozbe/simdjson', :modular_headers => true\n\n  `;
-                    await fs.writeFile(filePath, slicedContent.join(patchKey));
-                }
+                const patchKey = "post_install";
+                const slicedContent = contents.split(patchKey);
+                slicedContent[0] += `\n
+  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`)), :modular_headers => true \n\n  `;
+                await fs.writeFile(filePath, slicedContent.join(patchKey));
             }
             else {
                 throw new Error("Please make sure you have watermelondb installed");
@@ -280,7 +253,6 @@ function withSDK50(options) {
             currentConfig = mainApplication(currentConfig);
         }
         // iOS
-        currentConfig = setWmelonBridgingHeader(currentConfig);
         currentConfig = withCocoaPods(currentConfig);
         if (options?.excludeSimArch === true) {
             currentConfig = withExcludedSimulatorArchitectures(currentConfig);
