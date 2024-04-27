@@ -230,7 +230,7 @@ const withCocoaPods = (config: ExpoConfig): ExpoConfig => {
       );
 
       if (watermelonPath) {
-        if (!contents.includes("pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'")) {
+        if (!contents.includes("pod 'simdjson'")) {
           const patchKey = "post_install";
           const slicedContent = contents.split(patchKey);
           slicedContent[0] += `\n

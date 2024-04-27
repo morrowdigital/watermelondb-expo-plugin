@@ -156,7 +156,7 @@ const withCocoaPods = (config) => {
             const contents = await fs.readFile(filePath, "utf-8");
             const watermelonPath = isWatermelonDBInstalled(config.modRequest.projectRoot);
             if (watermelonPath) {
-                if (!contents.includes("pod 'WatermelonDB', :path => '../node_modules/@nozbe/watermelondb'")) {
+                if (!contents.includes("pod 'simdjson'")) {
                     const patchKey = "post_install";
                     const slicedContent = contents.split(patchKey);
                     slicedContent[0] += `\n
