@@ -7,8 +7,8 @@ exports.withSDK50 = void 0;
 const config_plugins_1 = require("@expo/config-plugins");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const resolve_from_1 = __importDefault(require("resolve-from"));
 const insertLinesHelper_1 = require("./insertLinesHelper");
+const withCocoaPods_1 = require("./withCocoaPods");
 const fs = fs_1.default.promises;
 /**
  * Version 50+
@@ -165,29 +165,6 @@ import Foundation`;
         },
     ]);
 }
-const withCocoaPods = (config) => {
-    return (0, config_plugins_1.withDangerousMod)(config, [
-        "ios",
-        async (config) => {
-            const filePath = path_1.default.join(config.modRequest.platformProjectRoot, "Podfile");
-            const contents = await fs.readFile(filePath, "utf-8");
-            const watermelonPath = isWatermelonDBInstalled(config.modRequest.projectRoot);
-            if (watermelonPath) {
-                if (!contents.includes("pod 'simdjson'")) {
-                    const patchKey = "post_install";
-                    const slicedContent = contents.split(patchKey);
-                    slicedContent[0] += `\n
-  pod 'simdjson', path: File.join(File.dirname(\`node --print "require.resolve('@nozbe/simdjson/package.json')"\`)), :modular_headers => true \n\n  `;
-                    await fs.writeFile(filePath, slicedContent.join(patchKey));
-                }
-            }
-            else {
-                throw new Error("Please make sure you have watermelondb installed");
-            }
-            return config;
-        },
-    ]);
-};
 /**
  * Exclude building for arm64 on simulator devices in the pbxproj project.
  * Without this, production builds targeting simulators will fail.
@@ -213,10 +190,6 @@ const withExcludedSimulatorArchitectures = (c) => {
         return config;
     });
 };
-function isWatermelonDBInstalled(projectRoot) {
-    const resolved = resolve_from_1.default.silent(projectRoot, "@nozbe/watermelondb/package.json");
-    return resolved ? path_1.default.dirname(resolved) : null;
-}
 function getPlatformProjectFilePath(config, fileName) {
     const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, "");
     return path_1.default.join(config.modRequest.platformProjectRoot, projectName, fileName);
@@ -280,7 +253,7 @@ function withSDK50(options) {
             currentConfig = mainApplication(currentConfig);
         }
         // iOS
-        currentConfig = withCocoaPods(currentConfig);
+        currentConfig = (0, withCocoaPods_1.withCocoaPods)(currentConfig);
         if (options?.excludeSimArch === true) {
             currentConfig = withExcludedSimulatorArchitectures(currentConfig);
         }
@@ -298,7 +271,7 @@ exports.default = (config, options) => {
         config = setAndroidMainApplication(config);
         config = addFlipperDb(config, options?.databases ?? []);
         config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config), options);
-        config = withCocoaPods(config);
+        config = (0, withCocoaPods_1.withCocoaPods)(config);
         config = withExcludedSimulatorArchitectures(config);
     }
     return config;
