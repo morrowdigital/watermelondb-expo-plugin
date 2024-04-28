@@ -10,6 +10,10 @@ const path_1 = __importDefault(require("path"));
 const insertLinesHelper_1 = require("./insertLinesHelper");
 const withCocoaPods_1 = require("./withCocoaPods");
 const withExcludedSimulatorArchitectures_1 = require("./withExcludedSimulatorArchitectures");
+const withSettingGradle_1 = require("./withSettingGradle");
+const withBuildGradle_1 = require("./withBuildGradle");
+const withMainApplication_1 = require("./withMainApplication");
+const withProGuardRules_1 = require("./withProGuardRules");
 const fs = fs_1.default.promises;
 /**
  * Version 50+
@@ -29,31 +33,6 @@ function setAndroidMainApplication(config) {
         },
     ]);
 }
-function settingGradle(gradleConfig) {
-    return (0, config_plugins_1.withSettingsGradle)(gradleConfig, (mod) => {
-        if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
-            mod.modResults.contents += `
-          include ':watermelondb-jsi'
-          project(':watermelondb-jsi').projectDir = new File([
-              "node", "--print", 
-              "require.resolve('@nozbe/watermelondb/package.json')"
-          ].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
-        `;
-        }
-        return mod;
-    });
-}
-function buildGradle(config) {
-    return (0, config_plugins_1.withAppBuildGradle)(config, (mod) => {
-        if (!mod.modResults.contents.includes("implementation project(':watermelondb-jsi')")) {
-            const newContents = mod.modResults.contents.replace('dependencies {', `dependencies {
-          implementation project(':watermelondb-jsi')
-          `);
-            mod.modResults.contents = newContents;
-        }
-        return mod;
-    });
-}
 const cocoaPods = (config) => {
     return (0, config_plugins_1.withDangerousMod)(config, [
         "ios",
@@ -71,39 +50,6 @@ const cocoaPods = (config) => {
         },
     ]);
 };
-function mainApplication(config) {
-    return (0, config_plugins_1.withMainApplication)(config, (mod) => {
-        if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
-            mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
-import android.app.Application
-import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;        
-`);
-        }
-        if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
-            const newContents2 = mod.modResults.contents.replace('override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED', `
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-        override fun getJSIModulePackage(): JSIModulePackage {
-        return WatermelonDBJSIPackage()
-        }`);
-            mod.modResults.contents = newContents2;
-        }
-        return mod;
-    });
-}
-function proGuardRules(config) {
-    return (0, config_plugins_1.withDangerousMod)(config, ['android', async (config) => {
-            const contents = await fs.readFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, 'utf-8');
-            if (!contents.includes("-keep class com.nozbe.watermelondb.** { *; }")) {
-                const newContents = `
-      ${contents}
-      -keep class com.nozbe.watermelondb.** { *; }
-      `;
-                await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
-            }
-            return config;
-        }]);
-}
 /**
  * Version 50+ finish
  *  */
@@ -215,7 +161,7 @@ const withWatermelonDBAndroidJSI = (config, options) => {
             return mod;
         });
     }
-    return mainApplication(settingGradle(buildGradle(config)));
+    return mainApplication((0, withSettingGradle_1.withSettingGradle)(buildGradle(config)));
 };
 // @ts-ignore
 function withSDK50(options) {
@@ -223,10 +169,10 @@ function withSDK50(options) {
         let currentConfig = config;
         // Android
         if (options?.disableJsi !== true) {
-            currentConfig = settingGradle(config);
-            currentConfig = buildGradle(currentConfig);
-            currentConfig = proGuardRules(currentConfig);
-            currentConfig = mainApplication(currentConfig);
+            currentConfig = (0, withSettingGradle_1.withSettingGradle)(config);
+            currentConfig = (0, withBuildGradle_1.withBuildGradle)(currentConfig);
+            currentConfig = (0, withProGuardRules_1.proGuardRules)(currentConfig);
+            currentConfig = (0, withMainApplication_1.mainApplication)(currentConfig);
         }
         // iOS
         currentConfig = (0, withCocoaPods_1.withCocoaPods)(currentConfig);
