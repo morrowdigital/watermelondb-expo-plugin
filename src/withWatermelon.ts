@@ -13,6 +13,7 @@ import {withExcludedSimulatorArchitectures} from "./withExcludedSimulatorArchite
 import {withSettingGradle} from "./withSettingGradle";
 import {withBuildGradle} from "./withBuildGradle";
 import {mainApplication} from "./withMainApplication";
+import {proGuardRules} from "./withProGuardRules";
 
 const fs = filesys.promises;
 
@@ -75,22 +76,6 @@ const cocoaPods = (config: ExpoConfig): ExpoConfig => {
     },
   ]) as ExpoConfig;
 };
-
-function proGuardRules(config: ExpoConfig): ExpoConfig {
-  return withDangerousMod(config, ['android', async (config) => {
-    const contents = await fs.readFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, 'utf-8');
-    if (!contents.includes("-keep class com.nozbe.watermelondb.** { *; }")) {
-      const newContents = `
-      ${contents}
-      -keep class com.nozbe.watermelondb.** { *; }
-      `
-
-      await fs.writeFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, newContents);
-    }
-
-    return config;
-  }]) as ExpoConfig;
-}
 
 /**
  * Version 50+ finish

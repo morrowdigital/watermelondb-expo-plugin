@@ -1,6 +1,5 @@
 import {ExpoConfig} from "@expo/config-types";
 import {withMainApplication} from "@expo/config-plugins";
-import {findNewInstanceCodeBlock} from "@expo/config-plugins/build/android/codeMod";
 
 export function mainApplication(config: ExpoConfig): ExpoConfig {
     return withMainApplication(config, (mod) => {
