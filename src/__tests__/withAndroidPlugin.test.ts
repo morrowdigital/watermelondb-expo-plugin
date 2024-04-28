@@ -4,10 +4,12 @@ import {updatePodfile} from "../withCocoaPods";
 import {setExcludedArchitectures} from "../withExcludedSimulatorArchitectures";
 import {updateSettingsGradle} from "../withSettingGradle";
 import {updateBuildGradle} from "../withBuildGradle";
+import {updateMainApplication} from "../withMainApplication";
 
 describe('Android plugin', () => {
     let settingsGradle: string;
     let buildGradle: string;
+    let mainApplication: string;
 
     beforeAll(async () => {
         settingsGradle = await fs.readFile(
@@ -16,6 +18,10 @@ describe('Android plugin', () => {
 
         buildGradle = await fs.readFile(
             path.resolve(__dirname, './fixtures/app.build.gradle'),
+            'utf-8');
+
+        mainApplication = await fs.readFile(
+            path.resolve(__dirname, './fixtures/MainApplication.kt'),
             'utf-8');
     })
 
@@ -33,4 +39,10 @@ describe('Android plugin', () => {
         expect(newBuildGradle).toMatchSnapshot();
     })
 
+    it('should update the MainApplication once', async () => {
+        let newMainApp = updateMainApplication(mainApplication);
+        newMainApp = updateBuildGradle(newMainApp);
+
+        expect(newMainApp).toMatchSnapshot();
+    })
 })

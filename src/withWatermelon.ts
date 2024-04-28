@@ -12,6 +12,7 @@ import {withCocoaPods} from "./withCocoaPods";
 import {withExcludedSimulatorArchitectures} from "./withExcludedSimulatorArchitectures";
 import {withSettingGradle} from "./withSettingGradle";
 import {withBuildGradle} from "./withBuildGradle";
+import {mainApplication} from "./withMainApplication";
 
 const fs = filesys.promises;
 
@@ -74,32 +75,6 @@ const cocoaPods = (config: ExpoConfig): ExpoConfig => {
     },
   ]) as ExpoConfig;
 };
-
-function mainApplication(config: ExpoConfig): ExpoConfig {
-  return withMainApplication(config, (mod) => {
-    if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
-      mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
-import android.app.Application
-import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;        
-`);
-    }
-
-    if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
-      const newContents2 = mod.modResults.contents.replace(
-        'override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED',
-        `
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-        override fun getJSIModulePackage(): JSIModulePackage {
-        return WatermelonDBJSIPackage()
-        }`
-      )
-      mod.modResults.contents = newContents2;
-    }
-
-    return mod;
-  }) as ExpoConfig;
-}
 
 function proGuardRules(config: ExpoConfig): ExpoConfig {
   return withDangerousMod(config, ['android', async (config) => {
