@@ -1,18 +1,15 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Android plugin should update the BuildGradle once 1`] = `
-"apply plugin: "com.android.application"
+apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
- * These basically call \`react-native bundle\` with the correct arguments during the Android build
+ * These basically call `react-native bundle` with the correct arguments during the Android build
  * cycle. By default, bundleDebugJsAndAssets is skipped, as in debug/dev mode we prefer to load the
  * bundle directly from the development server. Below you can see all the possible configurations
  * and their defaults. If you decide to add a configuration block, make sure to add it before the
- * \`apply from: "../../node_modules/react-native/react.gradle"\` line.
+ * `apply from: "../../node_modules/react-native/react.gradle"` line.
  *
  * project.ext.react = [
  *   // the name of the generated asset file containing your JS bundle
@@ -35,8 +32,8 @@ import com.android.build.OutputFile
  *   // whether to bundle JS and assets in another build variant (if configured).
  *   // See http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Build-Variants
  *   // The configuration property can be in the following formats
- *   //         'bundleIn\${productFlavor}\${buildType}'
- *   //         'bundleIn\${buildType}'
+ *   //         'bundleIn${productFlavor}${buildType}'
+ *   //         'bundleIn${buildType}'
  *   // bundleInFreeDebug: true,
  *   // bundleInPaidRelease: true,
  *   // bundleInBeta: true,
@@ -45,8 +42,8 @@ import com.android.build.OutputFile
  *   // for example: to disable dev mode in the staging build type (if configured)
  *   devDisabledInStaging: true,
  *   // The configuration property can be in the following formats
- *   //         'devDisabledIn\${productFlavor}\${buildType}'
- *   //         'devDisabledIn\${buildType}'
+ *   //         'devDisabledIn${productFlavor}${buildType}'
+ *   //         'devDisabledIn${buildType}'
  *
  *   // the root of your project, i.e. where "package.json" lives
  *   root: "../../",
@@ -111,10 +108,10 @@ def enableProguardInReleaseBuilds = false
  * The preferred build flavor of JavaScriptCore.
  *
  * For example, to use the international variant, you can use:
- * \`def jscFlavor = 'org.webkit:android-jsc-intl:+'\`
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
  *
  * The international variant includes ICU i18n library and necessary data
- * allowing to use e.g. \`Date.toLocaleString\` and \`String.localeCompare\` that
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
@@ -194,7 +191,7 @@ android {
     }
 }
 
-// Apply static values from \`gradle.properties\` to the \`android.packagingOptions\`
+// Apply static values from `gradle.properties` to the `android.packagingOptions`
 // Accepts values in comma delimited lists, example:
 // android.packagingOptions.pickFirsts=/LICENSE,**/picasa.ini
 ["pickFirsts", "excludes", "merges", "doNotStrip"].each { prop ->
@@ -202,7 +199,7 @@ android {
     def options = (findProperty("android.packagingOptions.$prop") ?: "").split(",");
     // Trim all elements in place.
     for (i in 0..<options.size()) options[i] = options[i].trim();
-    // \`[] - ""\` is essentially \`[""].filter(Boolean)\` removing all empty strings.
+    // `[] - ""` is essentially `[""].filter(Boolean)` removing all empty strings.
     options -= ""
 
     if (options.length > 0) {
@@ -214,10 +211,7 @@ android {
     }
 }
 
-
 dependencies {
-     implementation project(':watermelondb-jsi') 
-
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -248,14 +242,14 @@ dependencies {
     }
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    debugImplementation("com.facebook.flipper:flipper:\${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:\${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:\${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
 
@@ -276,24 +270,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json')"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
 applyNativeModulesAppBuildGradle(project)
-"
-`;
-
-exports[`Android plugin should update the SettingsGradle once 1`] = `
-"rootProject.name = 'HelloWorld'
-
-apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
-useExpoModules()
-
-apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json')"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
-applyNativeModulesSettingsGradle(settings)
-
-include ':app'
-
-include ':watermelondb-jsi'
-project(':watermelondb-jsi').projectDir = new File([
-    "node", "--print", 
-    "require.resolve('@nozbe/watermelondb/package.json')"
-].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
-"
-`;

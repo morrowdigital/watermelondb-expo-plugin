@@ -11,6 +11,7 @@ import {insertLinesHelper} from "./insertLinesHelper";
 import {withCocoaPods} from "./withCocoaPods";
 import {withExcludedSimulatorArchitectures} from "./withExcludedSimulatorArchitectures";
 import {withSettingGradle} from "./withSettingGradle";
+import {withBuildGradle} from "./withBuildGradle";
 
 const fs = filesys.promises;
 
@@ -48,22 +49,6 @@ function setAndroidMainApplication(config: ExportedConfigWithProps) {
       return config;
     },
   ]);
-}
-
-function buildGradle(config: ExpoConfig): ExpoConfig {
-  return withAppBuildGradle(config, (mod) => {
-    if (!mod.modResults.contents.includes("implementation project(':watermelondb-jsi')")) {
-      const newContents = mod.modResults.contents.replace(
-          'dependencies {',
-          `dependencies {
-          implementation project(':watermelondb-jsi')
-          `
-      )
-      mod.modResults.contents = newContents;
-    }
-
-    return mod;
-  }) as ExpoConfig;
 }
 
 const cocoaPods = (config: ExpoConfig): ExpoConfig => {
@@ -317,7 +302,7 @@ export function withSDK50(options: Options) {
     // Android
     if (options?.disableJsi !== true) {
       currentConfig = withSettingGradle(config);
-      currentConfig = buildGradle(currentConfig);
+      currentConfig = withBuildGradle(currentConfig);
       currentConfig = proGuardRules(currentConfig);
       currentConfig = mainApplication(currentConfig);
     }
