@@ -3,7 +3,6 @@ import {
   withAppBuildGradle,
   withDangerousMod,
   withMainApplication,
-  withSettingsGradle,
 } from "@expo/config-plugins";
 import {ExpoConfig} from "@expo/config-types";
 import filesys from "fs";
@@ -11,6 +10,7 @@ import path from "path";
 import {insertLinesHelper} from "./insertLinesHelper";
 import {withCocoaPods} from "./withCocoaPods";
 import {withExcludedSimulatorArchitectures} from "./withExcludedSimulatorArchitectures";
+import {withSettingGradle} from "./withSettingGradle";
 
 const fs = filesys.promises;
 
@@ -48,21 +48,6 @@ function setAndroidMainApplication(config: ExportedConfigWithProps) {
       return config;
     },
   ]);
-}
-
-function settingGradle(gradleConfig: ExpoConfig): ExpoConfig {
-  return withSettingsGradle(gradleConfig, (mod) => {
-    if (!mod.modResults.contents.includes(':watermelondb-jsi')) {
-      mod.modResults.contents += `
-          include ':watermelondb-jsi'
-          project(':watermelondb-jsi').projectDir = new File([
-              "node", "--print", 
-              "require.resolve('@nozbe/watermelondb/package.json')"
-          ].execute(null, rootProject.projectDir).text.trim(), "../native/android-jsi")
-        `;
-    }
-    return mod;
-  }) as ExpoConfig;
 }
 
 function buildGradle(config: ExpoConfig): ExpoConfig {
@@ -321,7 +306,7 @@ const withWatermelonDBAndroidJSI = (config: ExpoConfig, options: Options) => {
     }) as ExpoConfig;
   }
 
-  return mainApplication(settingGradle(buildGradle(config)));
+  return mainApplication(withSettingGradle(buildGradle(config)));
 };
 
 
@@ -331,7 +316,7 @@ export function withSDK50(options: Options) {
     let currentConfig: ExpoConfig = config;
     // Android
     if (options?.disableJsi !== true) {
-      currentConfig = settingGradle(config);
+      currentConfig = withSettingGradle(config);
       currentConfig = buildGradle(currentConfig);
       currentConfig = proGuardRules(currentConfig);
       currentConfig = mainApplication(currentConfig);
