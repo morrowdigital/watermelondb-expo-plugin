@@ -15,4 +15,9 @@ describe('iOS plugin', () => {
         const updatedPodfile = (0, withCocoaPods_1.updatePodfile)(PodfileContents);
         expect(updatedPodfile).toMatchSnapshot();
     });
+    it('should update the Podfile with simdjson only once on multiple prebuilds', async () => {
+        let updatedPodfile = (0, withCocoaPods_1.updatePodfile)(PodfileContents);
+        (0, withCocoaPods_1.updatePodfile)(PodfileContents);
+        expect(updatedPodfile).toMatchSnapshot();
+    });
 });

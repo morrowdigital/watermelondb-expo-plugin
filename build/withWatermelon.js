@@ -9,6 +9,7 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const insertLinesHelper_1 = require("./insertLinesHelper");
 const withCocoaPods_1 = require("./withCocoaPods");
+const withExcludedSimulatorArchitectures_1 = require("./withExcludedSimulatorArchitectures");
 const fs = fs_1.default.promises;
 /**
  * Version 50+
@@ -165,31 +166,6 @@ import Foundation`;
         },
     ]);
 }
-/**
- * Exclude building for arm64 on simulator devices in the pbxproj project.
- * Without this, production builds targeting simulators will fail.
- */
-// @ts-ignore
-function setExcludedArchitectures(project) {
-    const configurations = project.pbxXCBuildConfigurationSection();
-    // @ts-ignore
-    for (const { buildSettings } of Object.values(configurations || {})) {
-        // Guessing that this is the best way to emulate Xcode.
-        // Using `project.addToBuildSettings` modifies too many targets.
-        if (typeof (buildSettings === null || buildSettings === void 0
-            ? void 0
-            : buildSettings.PRODUCT_NAME) !== "undefined") {
-            buildSettings['"EXCLUDED_ARCHS[sdk=iphonesimulator*]"'] = '"arm64"';
-        }
-    }
-    return project;
-}
-const withExcludedSimulatorArchitectures = (c) => {
-    return (0, config_plugins_1.withXcodeProject)(c, (config) => {
-        config.modResults = setExcludedArchitectures(config.modResults);
-        return config;
-    });
-};
 function getPlatformProjectFilePath(config, fileName) {
     const projectName = config.modRequest.projectName || config.name.replace(/[- ]/g, "");
     return path_1.default.join(config.modRequest.platformProjectRoot, projectName, fileName);
@@ -255,7 +231,7 @@ function withSDK50(options) {
         // iOS
         currentConfig = (0, withCocoaPods_1.withCocoaPods)(currentConfig);
         if (options?.excludeSimArch === true) {
-            currentConfig = withExcludedSimulatorArchitectures(currentConfig);
+            currentConfig = (0, withExcludedSimulatorArchitectures_1.withExcludedSimulatorArchitectures)(currentConfig);
         }
         return currentConfig;
     };
@@ -272,7 +248,7 @@ exports.default = (config, options) => {
         config = addFlipperDb(config, options?.databases ?? []);
         config = withWatermelonDBAndroidJSI(setWmelonBridgingHeader(config), options);
         config = (0, withCocoaPods_1.withCocoaPods)(config);
-        config = withExcludedSimulatorArchitectures(config);
+        config = (0, withExcludedSimulatorArchitectures_1.withExcludedSimulatorArchitectures)(config);
     }
     return config;
 };
