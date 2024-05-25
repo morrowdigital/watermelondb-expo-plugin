@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [2.3.3-beta.1]
+## [2.3.3] - 25/5/2024
 ### Bugfixes
 * Fix duplication of changes when `npx expo prebuild` is re-run. The code now check if changes are already in place.
 * Fix documentation: The correct option for disabling JSI is `{ "disableJsi": true }` and not `disableJSI`
