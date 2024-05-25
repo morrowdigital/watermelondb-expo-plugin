@@ -50,7 +50,7 @@ If you wish to disable JSI support during build you may add the option in config
 ```json
   [
     "@morrowdigital/watermelondb-expo-plugin",
-    { "disableJSI": true }
+    { "disableJsi": true }
   ]
 ```
 
