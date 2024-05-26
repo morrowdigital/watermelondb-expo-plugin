@@ -15,8 +15,8 @@
     "expo"
   ],
   "devDependencies": {
-    "@expo/config-plugins": "^7.8.4",
-    "expo-module-scripts": "^3.0.7"
+    "@expo/config-plugins": "^8.0.4",
+    "expo-module-scripts": "^3.5.1"
   },
   "files": [
     "build",
