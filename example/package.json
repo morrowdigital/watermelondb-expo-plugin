@@ -1,5 +1,8 @@
 {
   "scripts": {
+    "prestart": "npm --prefix .. run build",
+    "preios": "npm --prefix .. run build",
+    "preandroid": "npm --prefix .. run build",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -7,7 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
-    "@morrowdigital/watermelondb-expo-plugin": "^2.3.1",
+    "@morrowdigital/watermelondb-expo-plugin": "file:..",
     "@nozbe/watermelondb": "^0.26.0",
     "expo": "^50.0.0",
     "expo-build-properties": "~0.11.1",
@@ -29,7 +32,7 @@
     "@types/react": "~18.2.45",
     "@types/react-native": "~0.70.6",
     "jest-expo": "~50.0.2",
-    "react-test-renderer": "17.0.1",
+    "react-test-renderer": "18.2.0",
     "typescript": "^5.3.0"
   },
   "private": true,
