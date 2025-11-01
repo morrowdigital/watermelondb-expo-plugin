@@ -2,7 +2,7 @@
   "name": "wmdb-plugin-example",
   "version": "1.0.0",
   "main": "expo-router/entry",
-  "scheme": "your-app-scheme",
+  "scheme": "wmdbpluginexample",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -15,7 +15,8 @@
     "expo-linking": "~8.0.8",
     "expo-router": "~6.0.14",
     "expo-status-bar": "~3.0.8",
-    "react": "19.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "react-native": "0.81.4",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0"
