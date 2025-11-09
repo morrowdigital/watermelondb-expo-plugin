@@ -112,23 +112,20 @@ function mainApplication(config: ExpoConfig): ExpoConfig {
       mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
 import android.app.Application
 import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;        
 `);
     }
 
-    if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
-      const newContents2 = mod.modResults.contents.replace(
-        'override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED',
-        `
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-        override fun getJSIModulePackage(): JSIModulePackage {
-        return WatermelonDBJSIPackage()
-        }`
-      )
-      mod.modResults.contents = newContents2;
-    }
+      if (!mod.modResults.contents.includes("add(WatermelonDBJSIPackage())")) {
+          const newContents2 = mod.modResults.contents.replace(
+              '// add(MyReactNativePackage())',
+              `// add(MyReactNativePackage())
+               add(WatermelonDBJSIPackage())
+              `
+          )
+          mod.modResults.contents = newContents2;
+      }
 
-    return mod;
+      return mod;
   }) as ExpoConfig;
 }
 

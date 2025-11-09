@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.withSDK50 = void 0;
+exports.withSDK50 = withSDK50;
 const config_plugins_1 = require("@expo/config-plugins");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
@@ -76,15 +76,12 @@ function mainApplication(config) {
             mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
 import android.app.Application
 import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
-import com.facebook.react.bridge.JSIModulePackage;        
 `);
         }
-        if (!mod.modResults.contents.includes("override fun getJSIModulePackage(): JSIModulePackage")) {
-            const newContents2 = mod.modResults.contents.replace('override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED', `
-        override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-        override fun getJSIModulePackage(): JSIModulePackage {
-        return WatermelonDBJSIPackage()
-        }`);
+        if (!mod.modResults.contents.includes("add(WatermelonDBJSIPackage())")) {
+            const newContents2 = mod.modResults.contents.replace('// add(MyReactNativePackage())', `// add(MyReactNativePackage())
+               add(WatermelonDBJSIPackage())
+              `);
             mod.modResults.contents = newContents2;
         }
         return mod;
@@ -287,7 +284,6 @@ function withSDK50(options) {
         return currentConfig;
     };
 }
-exports.withSDK50 = withSDK50;
 // @ts-ignore
 exports.default = (config, options) => {
     if (config.sdkVersion >= '50.0.0') {
