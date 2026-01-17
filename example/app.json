@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.killerchip.wmdbpluginexample"
+      "bundleIdentifier": "digital.themorrow.wmdbpluginexample"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.killerchip.wmdbpluginexample"
+      "package": "digital.themorrow.wmdbpluginexample"
     },
     "web": {
       "favicon": "./assets/favicon.png"

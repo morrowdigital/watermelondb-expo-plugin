@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [2.4.0-beta.0] - 9/11/2025
+## [2.4.0]
 ### Added
 - Overhauled example app: Example application has now moved from its own [watermelondb-plugin-example repo](https://github.com/morrowdigital/watermelondb-plugin-example) under the `example/` directory.
 
