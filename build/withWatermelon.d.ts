@@ -5,5 +5,5 @@ type Options = {
     excludeSimArch?: boolean;
 };
 export declare function withSDK50(options: Options): (config: ExpoConfig) => ExpoConfig;
-declare const _default: (config: any, options: any) => any;
+declare const _default: (config: any, options: any) => ExpoConfig;
 export default _default;
