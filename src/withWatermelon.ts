@@ -75,6 +75,29 @@ import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;
   }) as ExpoConfig;
 }
 
+function mainApplicationSDK52(config: ExpoConfig): ExpoConfig {
+  return withMainApplication(config, (mod) => {
+    if (!mod.modResults.contents.includes("import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage")) {
+      mod.modResults['contents'] = mod.modResults.contents.replace('import android.app.Application', `
+import android.app.Application
+import com.nozbe.watermelondb.jsi.WatermelonDBJSIPackage;        
+`);
+    }
+
+    if (!mod.modResults.contents.includes("packages.add(WatermelonDBJSIPackage())")) {
+      const newContents2 = mod.modResults.contents.replace(
+          'return packages',
+          `
+            packages.add(WatermelonDBJSIPackage())
+        return packages`
+      )
+      mod.modResults.contents = newContents2;
+    }
+
+    return mod;
+  }) as ExpoConfig;
+}
+
 function proGuardRules(config: ExpoConfig): ExpoConfig {
   return withDangerousMod(config, ['android', async (config) => {
     const contents = await fs.readFile(`${config.modRequest.platformProjectRoot}/app/proguard-rules.pro`, 'utf-8');
@@ -131,7 +154,10 @@ export function withSDK50(options: Options) {
       currentConfig = settingGradle(config);
       currentConfig = buildGradle(currentConfig);
       currentConfig = proGuardRules(currentConfig);
-      currentConfig = mainApplication(currentConfig);
+      // Only manual link package on sdk 52+ as descripted here:
+      // https://github.com/Nozbe/WatermelonDB/issues/1769#issuecomment-2600274652
+      currentConfig = config.sdkVersion && config.sdkVersion >= '52.0.0' ?
+          mainApplicationSDK52(currentConfig) : mainApplication(currentConfig);
     }
 
     // iOS
